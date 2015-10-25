@@ -46,11 +46,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -58,16 +68,72 @@
   <ItemGroup>
     <Compile Include="IXanoHubService.cs" />
     <Compile Include="Publisher.cs" />
+    <Compile Include="XanoDataEntities.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XanoDataEntities.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="XanoDataEntities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XanoDataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="XanoDataEntities.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XanoDataEntities.edmx</DependentUpon>
+    </Compile>
     <Compile Include="XanoHubRepository.cs" />
     <Compile Include="NotificationEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subscriber.cs" />
     <Compile Include="XanoHubService.cs" />
+    <Compile Include="xNotification.cs">
+      <DependentUpon>XanoDataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="xNotificationEvent.cs">
+      <DependentUpon>XanoDataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="xPublisher.cs">
+      <DependentUpon>XanoDataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="xSubscriber.cs">
+      <DependentUpon>XanoDataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="xSubscription.cs">
+      <DependentUpon>XanoDataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="xSubscriptionNotification.cs">
+      <DependentUpon>XanoDataEntities.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <EntityDeploy Include="XanoDataEntities.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>XanoDataEntities.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="packages.config" />
+    <None Include="XanoDataEntities.edmx.diagram">
+      <DependentUpon>XanoDataEntities.edmx</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="XanoDataEntities.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>XanoDataEntities.edmx</DependentUpon>
+      <LastGenOutput>XanoDataEntities.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="XanoDataEntities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>XanoDataEntities.edmx</DependentUpon>
+      <LastGenOutput>XanoDataEntities.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
