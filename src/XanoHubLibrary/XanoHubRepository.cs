@@ -22,7 +22,36 @@ namespace XanoHubLibrary
         /// <param name="notificationEvent"></param>
         public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent)
         {
+            using (var db = new XanoHubEntities())
+            {
+                var xPublisher = (from p in db.xPublishers
+                                  where p.Name == publisher.Name
+                                  select p).SingleOrDefault();
+                if (xPublisher == null)
+                {
+                    db.xPublishers.Add(new xPublisher()
+                    {
+                        Name = publisher.Name,
+                        CreatedDate = DateTime.Now
+                    });
+                }
 
+                var xNotificationEvent = (from ne in db.xNotificationEvents
+                                  where ne.Name == notificationEvent.Name
+                                  select ne).SingleOrDefault();
+                if (xNotificationEvent == null)
+                {
+                    db.xNotificationEvents.Add(new xNotificationEvent()
+                    {
+                        Name = notificationEvent.Name,
+                        CreatedDate = DateTime.Now
+                    });
+                }
+                else
+                {
+                    throw new Exception("Notification: " + notificationEvent.Name + " already exists.");
+                }
+            }
         }
 
         /// <summary>
@@ -31,7 +60,14 @@ namespace XanoHubLibrary
         /// <returns></returns>
         public List<NotificationEvent> GetNotificationEvents()
         {
-            return null;
+            using (var db = new XanoHubEntities())
+            {
+                return (from ne in db.xNotificationEvents
+                          select new NotificationEvent()
+                          {
+                              Name = ne.Name 
+                          }).ToList();
+            }
         }
 
         /// <summary>
