@@ -86,7 +86,14 @@ namespace XanoHubLibrary
         /// <returns></returns>
         public List<Subscriber> GetSubscribers()
         {
-            return null;
+            using (var db = new XanoHubEntities())
+            {
+                return (from s in db.xSubscribers
+                        select new Subscriber()
+                        {
+                            Name = s.Name
+                        }).ToList();
+            }
         }
 
         /// <summary>
@@ -96,7 +103,17 @@ namespace XanoHubLibrary
         /// <returns></returns>
         public List<NotificationEvent> GetNotificationsForSubscriber(Subscriber subscriber)
         {
-            return null;
+            using (var db = new XanoHubEntities())
+            {
+                return (from sb in db.xSubscriptions
+                        join ne in db.xNotificationEvents on sb.NotificationEventId equals ne.Id
+                        join sc in db.xSubscribers on sb.SubscriberId equals sc.Id
+                        where sc.Name == subscriber.Name
+                        select new NotificationEvent()
+                        {
+                            Name = ne.Name
+                        }).ToList();
+            }
         }
 
         /// <summary>
@@ -219,9 +236,10 @@ namespace XanoHubLibrary
         /// <summary>
         /// Called by the WCF service for each subscriber that we attempted to called
         /// </summary>
-        /// <param name="publisher"></param>
+        /// <param name="publisher">Publisher of the event notification</param>
         /// <param name="notificationEvent"></param>
-        /// <param name="subscriber"></param>
+        /// <param name="subscriber">Subscriber we attempted to contact</param>
+        /// <param name="errorMessage">If an error occurred, this will be a non-null string with the message</param>
         public void EndNotifySubscriber(Publisher publisher, NotificationEvent notificationEvent, Subscriber subscriber, string errorMessage)
         {
             // Find the subscription id by subscriber name and notification event name
