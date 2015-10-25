@@ -114,8 +114,66 @@ namespace XanoHubLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <param name="notification"></param>
-        public void Subscribe(Subscriber subscriber, NotificationEvent notification)
+        public void Subscribe(Subscriber subscriber, NotificationEvent notificationEvent)
         {
+            using (var db = new XanoHubEntities())
+            {
+                var xNotificationEvent = (from ne in db.xNotificationEvents
+                                          where ne.Name == notificationEvent.Name
+                                          select ne).SingleOrDefault();
+                if (xNotificationEvent == null)
+                {
+                    throw new Exception("Notification event with name: " + notificationEvent.Name + " has not been published.");
+                }
+
+                var subscriberId = 0;
+                var xSubscriber = (from s in db.xSubscribers
+                                  where s.Name == subscriber.Name
+                                  select s).SingleOrDefault();
+                if (xSubscriber == null)
+                {
+                    var newSubscriber = new xSubscriber()
+                    {
+                        Name = subscriber.Name,
+                        CreatedDate = DateTime.Now
+                    };
+                    db.xSubscribers.Add(newSubscriber);
+                    subscriberId = newSubscriber.Id;
+                }
+                else
+                {
+                    subscriberId = xSubscriber.Id;
+                }
+
+
+
+                var xSubscriptionDB = (from sc in db.xSubscriptions
+                                     join sb in db.xSubscribers on sc.SubscriberId equals sb.Id
+                                     join ne in db.xNotificationEvents on sc.NotificationEventId equals ne.Id
+                                     where ne.Name == notificationEvent.Name && sb.Name == subscriber.Name 
+                                     select new
+                                     {
+                                         SubscriberName = sb.Name, 
+                                         NotificationEvent = ne.Name,
+                                         NotificationEventId = ne.Id,
+                                         SubscriberId = sb.Id
+                                     }).SingleOrDefault();
+                if (xNotificationEvent == null)
+                {
+                    db.xSubscriptions.Add(new xSubscription()
+                    {
+                        NotificationEventId = xSubscriptionDB.NotificationEventId,
+                        SubscriberId = xSubscriptionDB.SubscriberId,
+                        CreatedDate = DateTime.Now
+                    });
+                }
+                else
+                {
+                    throw new Exception("Subscription: " + notificationEvent.Name + " already exists.");
+                }
+
+                db.SaveChanges();
+            }
 
         }
 
@@ -130,20 +188,22 @@ namespace XanoHubLibrary
         }
 
         /// <summary>
+        /// Called by the WCF service when an attempt is made to notify everyone of a notification event
         /// Tracks an outgoing hub notification attempt to subscribers in the database
         /// </summary>
-        /// <param name="notification"></param>
-        public void BeginNotify(NotificationEvent notification)
+        /// <param name="notificationEvent"></param>
+        public void BeginNotifyAll(NotificationEvent notificationEvent)
         {
 
         }
 
         /// <summary>
+        /// Called by the WCF service for each 
         /// Tracks the successful send of a hub notification to the subscriber in the database
         /// </summary>
-        /// <param name="notification"></param>
+        /// <param name="notificationEvent"></param>
         /// <param name="subscriber"></param>
-        public void EndNotify(NotificationEvent notification, Subscriber subscriber)
+        public void EndNotifySubscriber(NotificationEvent notificationEvent, Subscriber subscriber)
         {
 
         }
