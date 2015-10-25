@@ -192,17 +192,34 @@ namespace XanoHubLibrary
         /// Tracks an outgoing hub notification attempt to subscribers in the database
         /// </summary>
         /// <param name="notificationEvent"></param>
-        public void BeginNotifyAll(NotificationEvent notificationEvent)
+        public void BeginNotifyAll(Publisher publisher, NotificationEvent notificationEvent)
         {
+            // todo: find the notification event Id by name, and if it doesn't
+            // exist, throw an exception
+            using (var db = new XanoHubEntities())
+            {
+                var notificationEventDB = (from ne in db.xNotificationEvents
+                                           where ne.Name == notificationEvent.Name
+                                           select ne).SingleOrDefault();
+                if (notificationEventDB == null)
+                    throw new Exception("Notification by name: " + notificationEvent.Name + " does not exist");
 
+                var notification = new xNotification()
+                {
+                    NotificationEventId = notificationEventDB.Id,
+                    
+                    CreatedDate = DateTime.Now
+                };
+            }
         }
 
         /// <summary>
         /// Called by the WCF service for each subscriber that we attempted to called
         /// </summary>
+        /// <param name="publisher"></param>
         /// <param name="notificationEvent"></param>
         /// <param name="subscriber"></param>
-        public void EndNotifySubscriber(NotificationEvent notificationEvent, Subscriber subscriber)
+        public void EndNotifySubscriber(Publisher publisher, NotificationEvent notificationEvent, Subscriber subscriber)
         {
 
         }

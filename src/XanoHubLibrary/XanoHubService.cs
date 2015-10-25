@@ -52,19 +52,20 @@ namespace XanoHubLibrary
         /// <summary>
         /// Method used to allow a service to send a notification on the notification
         /// </summary>
-        /// <param name="notification"></param>
-        public void Notify(NotificationEvent notificationEvent)
+        /// <param name="publisher"></param>
+        /// <param name="notificationEvent"></param>
+        public void NotifySubscribers(Publisher publisher, NotificationEvent notificationEvent)
         {
             // Let the repository know that we are starting a notify, so that a Notification record
             // can be created to track everything
-            XanoHubRepository.Instance.BeginNotifyAll(notificationEvent);
+            XanoHubRepository.Instance.BeginNotifyAll(publisher, notificationEvent);
 
             // Find all the subscribers that want to know about this notification
             var subscribers = XanoHubRepository.Instance.GetSubscribersForNotification(notificationEvent);
             foreach(var subscriber in subscribers)
             {
                 // todo: call subscriber.NotificationUrl
-                XanoHubRepository.Instance.EndNotifySubscriber(notificationEvent, subscriber /*, todo: exceptionDetails */);
+                XanoHubRepository.Instance.EndNotifySubscriber(publisher, notificationEvent, subscriber /*, todo: exceptionDetails */);
             }
         }
 

@@ -23,6 +23,6 @@ namespace XanoHubLibrary
         void Unsubscribe(Subscriber subscriber, NotificationEvent notificationEvent);
 
         [OperationContract]
-        void Notify(NotificationEvent notificationEvent);
+        void NotifySubscribers(Publisher publisher, NotificationEvent notificationEvent);
     }
 }
