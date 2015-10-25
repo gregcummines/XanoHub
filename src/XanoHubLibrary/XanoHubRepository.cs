@@ -198,8 +198,7 @@ namespace XanoHubLibrary
         }
 
         /// <summary>
-        /// Called by the WCF service for each 
-        /// Tracks the successful send of a hub notification to the subscriber in the database
+        /// Called by the WCF service for each subscriber that we attempted to called
         /// </summary>
         /// <param name="notificationEvent"></param>
         /// <param name="subscriber"></param>
