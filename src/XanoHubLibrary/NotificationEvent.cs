@@ -12,8 +12,5 @@ namespace XanoHubLibrary
     {
         [DataMember]
         public string Name { get; set; }
-
-        [DataMember]
-        public string ServiceOwner { get; set; }
     }
 }

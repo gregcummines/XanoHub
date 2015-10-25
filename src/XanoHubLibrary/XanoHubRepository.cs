@@ -24,16 +24,23 @@ namespace XanoHubLibrary
         {
             using (var db = new XanoHubEntities())
             {
+                var publisherId = 0;
                 var xPublisher = (from p in db.xPublishers
                                   where p.Name == publisher.Name
                                   select p).SingleOrDefault();
                 if (xPublisher == null)
                 {
-                    db.xPublishers.Add(new xPublisher()
+                    var newPublisher = new xPublisher()
                     {
                         Name = publisher.Name,
                         CreatedDate = DateTime.Now
-                    });
+                    };
+                    db.xPublishers.Add(newPublisher);
+                    publisherId = newPublisher.Id;
+                }
+                else
+                {
+                    publisherId = xPublisher.Id;
                 }
 
                 var xNotificationEvent = (from ne in db.xNotificationEvents
@@ -44,6 +51,7 @@ namespace XanoHubLibrary
                     db.xNotificationEvents.Add(new xNotificationEvent()
                     {
                         Name = notificationEvent.Name,
+                        PublisherId = publisherId,
                         CreatedDate = DateTime.Now
                     });
                 }
@@ -51,6 +59,8 @@ namespace XanoHubLibrary
                 {
                     throw new Exception("Notification: " + notificationEvent.Name + " already exists.");
                 }
+
+                db.SaveChanges();
             }
         }
 
