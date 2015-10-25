@@ -11,18 +11,18 @@ namespace XanoHubLibrary
     public interface IXanoHubService
     {
         [OperationContract]
-        void CreateNotification(Notification notification);
+        void CreateNotificationEvent(Publisher publisher, NotificationEvent notification);
 
         [OperationContract]
-        List<Notification> GetNotifications();
+        List<NotificationEvent> GetNotificationEvents();
 
         [OperationContract]
-        void Subscribe(Subscriber subscriber, Notification notification);
+        void Subscribe(Subscriber subscriber, NotificationEvent notification);
 
         [OperationContract]
-        void Unsubscribe(Subscriber subscriber, Notification notification);
+        void Unsubscribe(Subscriber subscriber, NotificationEvent notification);
 
         [OperationContract]
-        void Notify(Notification notification);
+        void Notify(NotificationEvent notification);
     }
 }

@@ -33,26 +33,27 @@ namespace XanoHubLibrary
         /// Used to create a notification. Any service can create a notification and notify
         /// any subscribers of changes. 
         /// </summary>
-        /// <param name="notification"></param>
-        public void CreateNotification(Notification notification)
+        /// <param name="publisher"></param>
+        /// <param name="notificationEvent"></param>
+        public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent)
         {
-            XanoHubRepository.Instance.CreateNotification(notification);
+            XanoHubRepository.Instance.CreateNotificationEvent(publisher, notificationEvent);
         }
 
         /// <summary>
         /// Gets the list of notifications supported by the XanoHub
         /// </summary>
         /// <returns></returns>
-        public List<Notification> GetNotifications()
+        public List<NotificationEvent> GetNotificationEvents()
         {
-            return XanoHubRepository.Instance.GetNotifications();  
+            return XanoHubRepository.Instance.GetNotificationEvents();  
         }
 
         /// <summary>
         /// Method used to allow a service to send a notification on the notification
         /// </summary>
         /// <param name="notification"></param>
-        public void Notify(Notification notification)
+        public void Notify(NotificationEvent notification)
         {
             XanoHubRepository.Instance.BeginNotify(notification);
             var subscribers = XanoHubRepository.Instance.GetSubscribersForNotification(notification);
@@ -64,12 +65,12 @@ namespace XanoHubLibrary
             }
         }
 
-        public void Subscribe(Subscriber subscriber, Notification notification)
+        public void Subscribe(Subscriber subscriber, NotificationEvent notification)
         {
             XanoHubRepository.Instance.Subscribe(subscriber, notification);
         }
 
-        public void Unsubscribe(Subscriber subscriber, Notification notification)
+        public void Unsubscribe(Subscriber subscriber, NotificationEvent notification)
         {
             XanoHubRepository.Instance.Unsubscribe(subscriber, notification);
         }

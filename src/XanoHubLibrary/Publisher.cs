@@ -8,12 +8,9 @@ using System.Threading.Tasks;
 namespace XanoHubLibrary
 {
     [DataContract]
-    public class Notification
+    public class Publisher
     {
         [DataMember]
         public string Name { get; set; }
-
-        [DataMember]
-        public string ServiceOwner { get; set; }
     }
 }

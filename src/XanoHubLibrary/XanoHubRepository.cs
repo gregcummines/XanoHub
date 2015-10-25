@@ -19,8 +19,8 @@ namespace XanoHubLibrary
         /// <summary>
         /// Stores a new notification type in the database
         /// </summary>
-        /// <param name="notification"></param>
-        public void CreateNotification(Notification notification)
+        /// <param name="notificationEvent"></param>
+        public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent)
         {
 
         }
@@ -29,7 +29,7 @@ namespace XanoHubLibrary
         /// Gets a list of all notification types from the database
         /// </summary>
         /// <returns></returns>
-        public List<Notification> GetNotifications()
+        public List<NotificationEvent> GetNotificationEvents()
         {
             return null;
         }
@@ -48,7 +48,7 @@ namespace XanoHubLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <returns></returns>
-        public List<Notification> GetNotificationsForSubscriber(Subscriber subscriber)
+        public List<NotificationEvent> GetNotificationsForSubscriber(Subscriber subscriber)
         {
             return null;
         }
@@ -58,7 +58,7 @@ namespace XanoHubLibrary
         /// </summary>
         /// <param name="notification"></param>
         /// <returns></returns>
-        public List<Subscriber> GetSubscribersForNotification(Notification notification)
+        public List<Subscriber> GetSubscribersForNotification(NotificationEvent notification)
         {
             return null;
         }
@@ -68,7 +68,7 @@ namespace XanoHubLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <param name="notification"></param>
-        public void Subscribe(Subscriber subscriber, Notification notification)
+        public void Subscribe(Subscriber subscriber, NotificationEvent notification)
         {
 
         }
@@ -78,7 +78,7 @@ namespace XanoHubLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <param name="notification"></param>
-        public void Unsubscribe(Subscriber subscriber, Notification notification)
+        public void Unsubscribe(Subscriber subscriber, NotificationEvent notification)
         {
 
         }
@@ -87,7 +87,7 @@ namespace XanoHubLibrary
         /// Tracks an outgoing hub notification attempt to subscribers in the database
         /// </summary>
         /// <param name="notification"></param>
-        public void BeginNotify(Notification notification)
+        public void BeginNotify(NotificationEvent notification)
         {
 
         }
@@ -97,7 +97,7 @@ namespace XanoHubLibrary
         /// </summary>
         /// <param name="notification"></param>
         /// <param name="subscriber"></param>
-        public void EndNotify(Notification notification, Subscriber subscriber)
+        public void EndNotify(NotificationEvent notification, Subscriber subscriber)
         {
 
         }
