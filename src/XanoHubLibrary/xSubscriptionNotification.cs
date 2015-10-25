@@ -17,7 +17,6 @@ namespace XanoHubLibrary
         public int Id { get; set; }
         public int SubscriptionId { get; set; }
         public int NotificationId { get; set; }
-        public Nullable<System.DateTime> NotificationSent { get; set; }
         public string NotificationError { get; set; }
         public System.DateTime CreatedDate { get; set; }
     

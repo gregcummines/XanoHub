@@ -10,14 +10,14 @@
         <EntityTypeShape EntityType="XanoHubModel.xPublisher" Width="1.5" PointX="0.75" PointY="3" IsExpanded="true" />
         <EntityTypeShape EntityType="XanoHubModel.xSubscriber" Width="1.5" PointX="3" PointY="9.25" IsExpanded="true" />
         <EntityTypeShape EntityType="XanoHubModel.xSubscription" Width="1.5" PointX="5.25" PointY="7.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="XanoHubModel.xSubscriptionNotification" Width="1.5" PointX="7.5" PointY="6.25" IsExpanded="true" />
         <AssociationConnector Association="XanoHubModel.FK_Notification_NotificationEvent" ManuallyRouted="false" />
         <AssociationConnector Association="XanoHubModel.FK_Notification_Publisher" ManuallyRouted="false" />
-        <AssociationConnector Association="XanoHubModel.FK_SubscriptionNotifications_Notification" ManuallyRouted="false" />
         <AssociationConnector Association="XanoHubModel.FK_NotificationEvent_Publisher" ManuallyRouted="false" />
         <AssociationConnector Association="XanoHubModel.FK_Subscription_NotificationEvent" ManuallyRouted="false" />
         <AssociationConnector Association="XanoHubModel.FK_Subscription_Subscriber" ManuallyRouted="false" />
-        <AssociationConnector Association="XanoHubModel.FK_SubscriptionNotifications_Subscription" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="XanoHubModel.xSubscriptionNotification" Width="2.375" PointX="7.5" PointY="6.25" />
+        <AssociationConnector Association="XanoHubModel.FK_SubscriptionNotifications_Notification" />
+        <AssociationConnector Association="XanoHubModel.FK_SubscriptionNotifications_Subscription" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
