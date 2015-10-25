@@ -222,7 +222,7 @@ namespace XanoHubLibrary
         /// <param name="publisher"></param>
         /// <param name="notificationEvent"></param>
         /// <param name="subscriber"></param>
-        public void EndNotifySubscriber(Publisher publisher, NotificationEvent notificationEvent, Subscriber subscriber)
+        public void EndNotifySubscriber(Publisher publisher, NotificationEvent notificationEvent, Subscriber subscriber, string errorMessage)
         {
             // Find the subscription id by subscriber name and notification event name
             // We need it to create a list of records for each subscriber that we attemped to contact
@@ -231,13 +231,14 @@ namespace XanoHubLibrary
                 var subscriptionDB = (from sb in db.xSubscriptions
                                       join sc in db.xSubscribers on sb.SubscriberId equals sc.Id
                                       select sb).SingleOrDefault();
+
                 if (subscriptionDB == null)
                     throw new Exception("Subscription does not exist!");
+
                 var subscriptionNotification = new xSubscriptionNotification()
                 {
                     CreatedDate = DateTime.Now,
-                    /* todo: NotificationError = errorMessage, */
-                    // todo: delete this column from the database: NotificationSent
+                    NotificationError = errorMessage,
                     SubscriptionId = subscriptionDB.Id,
                 };
 

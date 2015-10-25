@@ -65,7 +65,8 @@ namespace XanoHubLibrary
             foreach(var subscriber in subscribers)
             {
                 // todo: call subscriber.NotificationUrl
-                XanoHubRepository.Instance.EndNotifySubscriber(publisher, notificationEvent, subscriber /*, todo: exceptionDetails */);
+                var errorMessage = string.Empty;    // todo: fill in the string
+                XanoHubRepository.Instance.EndNotifySubscriber(publisher, notificationEvent, subscriber, errorMessage);
             }
         }
 
