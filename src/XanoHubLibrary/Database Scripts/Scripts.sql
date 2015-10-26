@@ -1,112 +1,139 @@
-﻿USE [master]
+﻿USE [XanoHub]
 GO
-
-/****** Object:  Database [XanoHub]    Script Date: 10/25/2015 7:12:27 PM ******/
-CREATE DATABASE [XanoHub]
- CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'XanoHub', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\XanoHub.mdf' , SIZE = 4096KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
- LOG ON 
-( NAME = N'XanoHub_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\XanoHub_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
+/****** Object:  Table [dbo].[xNotification]    Script Date: 10/25/2015 7:26:24 PM ******/
+SET ANSI_NULLS ON
 GO
-
-ALTER DATABASE [XanoHub] SET COMPATIBILITY_LEVEL = 120
+SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[xNotification](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[PublisherId] [int] NOT NULL,
+	[NotificationEventId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Notification] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 
-IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
-begin
-EXEC [XanoHub].[dbo].[sp_fulltext_database] @action = 'enable'
-end
 GO
-
-ALTER DATABASE [XanoHub] SET ANSI_NULL_DEFAULT OFF 
+/****** Object:  Table [dbo].[xNotificationEvent]    Script Date: 10/25/2015 7:26:24 PM ******/
+SET ANSI_NULLS ON
 GO
-
-ALTER DATABASE [XanoHub] SET ANSI_NULLS OFF 
+SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[xNotificationEvent](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[PublisherId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_NotificationEvent] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 
-ALTER DATABASE [XanoHub] SET ANSI_PADDING OFF 
 GO
-
-ALTER DATABASE [XanoHub] SET ANSI_WARNINGS OFF 
+/****** Object:  Table [dbo].[xPublisher]    Script Date: 10/25/2015 7:26:24 PM ******/
+SET ANSI_NULLS ON
 GO
-
-ALTER DATABASE [XanoHub] SET ARITHABORT OFF 
+SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[xPublisher](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Publisher] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 
-ALTER DATABASE [XanoHub] SET AUTO_CLOSE OFF 
 GO
-
-ALTER DATABASE [XanoHub] SET AUTO_SHRINK OFF 
+/****** Object:  Table [dbo].[xSubscriber]    Script Date: 10/25/2015 7:26:24 PM ******/
+SET ANSI_NULLS ON
 GO
-
-ALTER DATABASE [XanoHub] SET AUTO_UPDATE_STATISTICS ON 
+SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[xSubscriber](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Subscriber] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 
-ALTER DATABASE [XanoHub] SET CURSOR_CLOSE_ON_COMMIT OFF 
 GO
-
-ALTER DATABASE [XanoHub] SET CURSOR_DEFAULT  GLOBAL 
+/****** Object:  Table [dbo].[xSubscription]    Script Date: 10/25/2015 7:26:24 PM ******/
+SET ANSI_NULLS ON
 GO
-
-ALTER DATABASE [XanoHub] SET CONCAT_NULL_YIELDS_NULL OFF 
+SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[xSubscription](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[SubscriberId] [int] NOT NULL,
+	[NotificationEventId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Subscription] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 
-ALTER DATABASE [XanoHub] SET NUMERIC_ROUNDABORT OFF 
 GO
-
-ALTER DATABASE [XanoHub] SET QUOTED_IDENTIFIER OFF 
+/****** Object:  Table [dbo].[xSubscriptionNotifications]    Script Date: 10/25/2015 7:26:24 PM ******/
+SET ANSI_NULLS ON
 GO
-
-ALTER DATABASE [XanoHub] SET RECURSIVE_TRIGGERS OFF 
+SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[xSubscriptionNotifications](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[SubscriptionId] [int] NOT NULL,
+	[NotificationId] [int] NOT NULL,
+	[NotificationError] [nvarchar](4000) NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_SubscriptionNotifications] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 
-ALTER DATABASE [XanoHub] SET  DISABLE_BROKER 
 GO
-
-ALTER DATABASE [XanoHub] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+ALTER TABLE [dbo].[xNotification]  WITH CHECK ADD  CONSTRAINT [FK_Notification_NotificationEvent] FOREIGN KEY([NotificationEventId])
+REFERENCES [dbo].[xNotificationEvent] ([Id])
 GO
-
-ALTER DATABASE [XanoHub] SET DATE_CORRELATION_OPTIMIZATION OFF 
+ALTER TABLE [dbo].[xNotification] CHECK CONSTRAINT [FK_Notification_NotificationEvent]
 GO
-
-ALTER DATABASE [XanoHub] SET TRUSTWORTHY OFF 
+ALTER TABLE [dbo].[xNotification]  WITH CHECK ADD  CONSTRAINT [FK_Notification_Publisher] FOREIGN KEY([PublisherId])
+REFERENCES [dbo].[xPublisher] ([Id])
 GO
-
-ALTER DATABASE [XanoHub] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+ALTER TABLE [dbo].[xNotification] CHECK CONSTRAINT [FK_Notification_Publisher]
 GO
-
-ALTER DATABASE [XanoHub] SET PARAMETERIZATION SIMPLE 
+ALTER TABLE [dbo].[xNotificationEvent]  WITH CHECK ADD  CONSTRAINT [FK_NotificationEvent_Publisher] FOREIGN KEY([PublisherId])
+REFERENCES [dbo].[xPublisher] ([Id])
 GO
-
-ALTER DATABASE [XanoHub] SET READ_COMMITTED_SNAPSHOT OFF 
+ALTER TABLE [dbo].[xNotificationEvent] CHECK CONSTRAINT [FK_NotificationEvent_Publisher]
 GO
-
-ALTER DATABASE [XanoHub] SET HONOR_BROKER_PRIORITY OFF 
+ALTER TABLE [dbo].[xSubscription]  WITH CHECK ADD  CONSTRAINT [FK_Subscription_NotificationEvent] FOREIGN KEY([NotificationEventId])
+REFERENCES [dbo].[xNotificationEvent] ([Id])
 GO
-
-ALTER DATABASE [XanoHub] SET RECOVERY FULL 
+ALTER TABLE [dbo].[xSubscription] CHECK CONSTRAINT [FK_Subscription_NotificationEvent]
 GO
-
-ALTER DATABASE [XanoHub] SET  MULTI_USER 
+ALTER TABLE [dbo].[xSubscription]  WITH CHECK ADD  CONSTRAINT [FK_Subscription_Subscriber] FOREIGN KEY([SubscriberId])
+REFERENCES [dbo].[xSubscriber] ([Id])
 GO
-
-ALTER DATABASE [XanoHub] SET PAGE_VERIFY CHECKSUM  
+ALTER TABLE [dbo].[xSubscription] CHECK CONSTRAINT [FK_Subscription_Subscriber]
 GO
-
-ALTER DATABASE [XanoHub] SET DB_CHAINING OFF 
+ALTER TABLE [dbo].[xSubscriptionNotifications]  WITH CHECK ADD  CONSTRAINT [FK_SubscriptionNotifications_Notification] FOREIGN KEY([NotificationId])
+REFERENCES [dbo].[xNotification] ([Id])
 GO
-
-ALTER DATABASE [XanoHub] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+ALTER TABLE [dbo].[xSubscriptionNotifications] CHECK CONSTRAINT [FK_SubscriptionNotifications_Notification]
 GO
-
-ALTER DATABASE [XanoHub] SET TARGET_RECOVERY_TIME = 0 SECONDS 
+ALTER TABLE [dbo].[xSubscriptionNotifications]  WITH CHECK ADD  CONSTRAINT [FK_SubscriptionNotifications_Subscription] FOREIGN KEY([SubscriptionId])
+REFERENCES [dbo].[xSubscription] ([Id])
 GO
-
-ALTER DATABASE [XanoHub] SET DELAYED_DURABILITY = DISABLED 
+ALTER TABLE [dbo].[xSubscriptionNotifications] CHECK CONSTRAINT [FK_SubscriptionNotifications_Subscription]
 GO
-
-ALTER DATABASE [XanoHub] SET  READ_WRITE 
-GO
-
-
