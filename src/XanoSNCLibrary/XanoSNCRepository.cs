@@ -19,8 +19,10 @@ namespace XanoSNCLibrary
         /// <summary>
         /// Stores a new notification type in the database
         /// </summary>
+        /// <param name="publisher"></param>
         /// <param name="notificationEvent"></param>
-        public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent)
+        /// <param name="jsonSchema">json Schema for the notification message that will be sent to subscribers</param>
+        public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent, string jsonSchema)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -52,6 +54,7 @@ namespace XanoSNCLibrary
                     {
                         Name = notificationEvent.Name,
                         PublisherId = publisherId,
+                        JsonSchema = jsonSchema,                
                         CreatedDate = DateTime.Now
                     });
                 }

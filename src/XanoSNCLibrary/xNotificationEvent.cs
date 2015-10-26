@@ -24,6 +24,7 @@ namespace XanoSNCLibrary
         public int Id { get; set; }
         public string Name { get; set; }
         public int PublisherId { get; set; }
+        public string JsonSchema { get; set; }
         public System.DateTime CreatedDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -11,7 +11,7 @@ namespace XanoSNCLibrary
     public interface IXanoSNCService
     {
         [OperationContract]
-        void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent);
+        void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent, string jsonSchema);
 
         [OperationContract]
         List<NotificationEvent> GetNotificationEvents();

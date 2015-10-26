@@ -26,10 +26,10 @@ namespace XanoSNCLibrary
         }
     
         public virtual DbSet<xNotification> xNotifications { get; set; }
-        public virtual DbSet<xNotificationEvent> xNotificationEvents { get; set; }
         public virtual DbSet<xPublisher> xPublishers { get; set; }
         public virtual DbSet<xSubscriber> xSubscribers { get; set; }
         public virtual DbSet<xSubscriptionNotification> xSubscriptionNotifications { get; set; }
         public virtual DbSet<xSubscription> xSubscriptions { get; set; }
+        public virtual DbSet<xNotificationEvent> xNotificationEvents { get; set; }
     }
 }

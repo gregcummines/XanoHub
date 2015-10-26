@@ -6,18 +6,18 @@
     <edmx:Diagrams>
       <Diagram DiagramId="66abe18ba1234229b2b5f5914a49da97" Name="Diagram1">
         <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xNotification" Width="1.5" PointX="5.25" PointY="4.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xNotificationEvent" Width="1.5" PointX="3" PointY="5.875" IsExpanded="true" />
         <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xPublisher" Width="1.5" PointX="0.75" PointY="3" IsExpanded="true" />
         <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xSubscriber" Width="1.5" PointX="3" PointY="9.125" IsExpanded="true" />
         <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xSubscriptionNotification" Width="2.375" PointX="7.5" PointY="6.25" IsExpanded="true" />
-        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent" ManuallyRouted="false" />
         <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Notification_Publisher" ManuallyRouted="false" />
         <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Notification" ManuallyRouted="false" />
-        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_NotificationEvent_Publisher" ManuallyRouted="false" />
         <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xSubscription" Width="1.5" PointX="5.25" PointY="8" />
-        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Subscription_NotificationEvent" />
         <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Subscription_Subscriber" />
         <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Subscription" />
+        <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xNotificationEvent" Width="1.5" PointX="3" PointY="2.75" />
+        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent" />
+        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_NotificationEvent_Publisher" />
+        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Subscription_NotificationEvent" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

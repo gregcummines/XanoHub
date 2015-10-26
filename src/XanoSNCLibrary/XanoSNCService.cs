@@ -37,9 +37,9 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="publisher"></param>
         /// <param name="notificationEvent"></param>
-        public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent)
+        public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent, string jsonSchema)
         {
-            XanoSNCRepository.Instance.CreateNotificationEvent(publisher, notificationEvent);
+            XanoSNCRepository.Instance.CreateNotificationEvent(publisher, notificationEvent, jsonSchema);
         }
 
         /// <summary>
