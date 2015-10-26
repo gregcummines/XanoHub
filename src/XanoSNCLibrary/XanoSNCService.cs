@@ -63,9 +63,10 @@ namespace XanoSNCLibrary
         /// <summary>
         /// Method used to allow a service to send a notification on the notification
         /// </summary>
-        /// <param name="publisher"></param>
-        /// <param name="notificationEvent"></param>
-        public void NotifySubscribers(Publisher publisher, NotificationEvent notificationEvent)
+        /// <param name="publisher">publisher that published the notification event</param>
+        /// <param name="notificationEvent">notification event being published</param>
+        /// <param name="json">json object with more information about the notification event</param>
+        public void NotifySubscribers(Publisher publisher, NotificationEvent notificationEvent, string json)
         {
             // Let the repository know that we are starting a notify, so that a Notification record
             // can be created to track everything
@@ -79,7 +80,7 @@ namespace XanoSNCLibrary
 
                 try
                 {
-                    NotifySubscriber(publisher, notificationEvent, subscriber);
+                    NotifySubscriber(publisher, notificationEvent, subscriber, json);
                 }
                 catch(Exception e)
                 {
@@ -90,64 +91,20 @@ namespace XanoSNCLibrary
             }
         }
 
-        async private void NotifySubscriber(Publisher publisher, NotificationEvent notificationEvent, Subscriber subscriber)
+        async private void NotifySubscriber(Publisher publisher, NotificationEvent notificationEvent, Subscriber subscriber, string json)
         {
             var notifyUrl = XanoSNCRepository.Instance.GetUrlFromSubscription(notificationEvent, subscriber);
 
-            HttpClient client = new HttpClient();
-
-            // GetStringAsync returns a Task<string>. That means that when you await the
-            // task you'll get a string (urlContents).
-            await client.GetStringAsync("http://msdn.microsoft.com");
-
-            //// Find the subscription in the repository by notificationevent and subscriber
-            //var subscription = XanoSNCRepository.Instance.GetNotificationsForSubscriber(subscriber).SingleOrDefault(r => r.Name == notificationEvent.Name);
-            //if (subscription != null)
-            //{
-            //    // todo: make Url call!!!!
-            //    if (true /* successful */)
-            //    {
-            //        XanoSNCRepository.Instance.EndNotifySubscriber()
-            //    }
-            //}
-            // todo: Use RestSharp to call a method on our subscriber
-
-            // Sample code below:
-
-            //var client = new RestClient("http://example.com");
-            //// client.Authenticator = new HttpBasicAuthenticator(username, password);
-
-            //var request = new RestRequest("resource/{id}", Method.POST);
-            //request.AddParameter("name", "value"); // adds to POST or URL querystring based on Method
-            //request.AddUrlSegment("id", "123"); // replaces matching token in request.Resource
-
-            //// easily add HTTP Headers
-            //request.AddHeader("header", "value");
-
-            //// add files to upload (works with compatible verbs)
-            //request.AddFile(path);
-
-            //// execute the request
-            //RestResponse response = client.Execute(request);
-            //var content = response.Content; // raw content as string
-
-            //// or automatically deserialize result
-            //// return content type is sniffed but can be explicitly set via RestClient.AddHandler();
-            //RestResponse<Person> response2 = client.Execute<Person>(request);
-            //var name = response2.Data.Name;
-
-            //// easy async support
-            //client.ExecuteAsync(request, response => {
-            //    Console.WriteLine(response.Content);
-            //});
-
-            //// async with deserialization
-            //var asyncHandle = client.ExecuteAsync<Person>(request, response => {
-            //    Console.WriteLine(response.Data.Name);
-            //});
-
-            //// abort the request on demand
-            //asyncHandle.Abort();
+            using (var httpClient = new HttpClient())
+            {
+                //string json = "{ 'FirmwarePackageVersion': '5.0.1.9', 'FirmwareConfigurationVersion': '9.1.1.3.0' }";
+                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(notifyUrl, null);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Status code is " + response.StatusCode);
+                }
+            }
         }
     }
 }

@@ -23,6 +23,6 @@ namespace XanoSNCLibrary
         void Unsubscribe(Subscriber subscriber, NotificationEvent notificationEvent);
 
         [OperationContract]
-        void NotifySubscribers(Publisher publisher, NotificationEvent notificationEvent);
+        void NotifySubscribers(Publisher publisher, NotificationEvent notificationEvent, string json);
     }
 }
