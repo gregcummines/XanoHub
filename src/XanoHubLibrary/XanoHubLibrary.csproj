@@ -125,6 +125,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Database Scripts\Scripts.sql" />
     <Content Include="XanoDataEntities.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>XanoDataEntities.edmx</DependentUpon>
