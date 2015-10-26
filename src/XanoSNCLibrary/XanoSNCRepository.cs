@@ -116,6 +116,44 @@ namespace XanoSNCLibrary
             }
         }
 
+        internal string GetUrlFromSubscription(NotificationEvent notificationEvent, Subscriber subscriber)
+        {
+            using (var db = new XanoSNCEntities())
+            {
+                var xNotificationEvent = (from ne in db.xNotificationEvents
+                                          where ne.Name == notificationEvent.Name
+                                          select ne).SingleOrDefault();
+                if (xNotificationEvent == null)
+                {
+                    throw new Exception("Notification event with name: " + notificationEvent.Name + " has not been published.");
+                }
+
+                var subscriberId = 0;
+                var xSubscriber = (from s in db.xSubscribers
+                                   where s.Name == subscriber.Name
+                                   select s).SingleOrDefault();
+                if (xSubscriber == null)
+                {
+                    throw new Exception("Subscriber " + subscriber.Name + " does not exist");
+                }
+                else
+                {
+                    subscriberId = xSubscriber.Id;
+                }
+
+                var notifyUrl = (from sc in db.xSubscriptions
+                                 join sb in db.xSubscribers on sc.SubscriberId equals sb.Id
+                                 join ne in db.xNotificationEvents on sc.NotificationEventId equals ne.Id
+                                 select sc.NotifyURL).FirstOrDefault();
+
+                if (notifyUrl == null)
+                {
+                    throw new Exception("Subscription for " + notificationEvent.Name + "not found for " + subscriber.Name);
+                }
+                return notifyUrl;
+            }
+        }
+
         /// <summary>
         /// Gets a list of subscribers for active notifications
         /// </summary>
@@ -131,7 +169,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <param name="notification"></param>
-        public void Subscribe(Subscriber subscriber, NotificationEvent notificationEvent)
+        public void Subscribe(Subscriber subscriber, NotificationEvent notificationEvent, string notifyUrl)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -162,8 +200,6 @@ namespace XanoSNCLibrary
                     subscriberId = xSubscriber.Id;
                 }
 
-
-
                 var xSubscriptionDB = (from sc in db.xSubscriptions
                                      join sb in db.xSubscribers on sc.SubscriberId equals sb.Id
                                      join ne in db.xNotificationEvents on sc.NotificationEventId equals ne.Id
@@ -181,6 +217,7 @@ namespace XanoSNCLibrary
                     {
                         NotificationEventId = xSubscriptionDB.NotificationEventId,
                         SubscriberId = xSubscriptionDB.SubscriberId,
+                        NotifyURL = notifyUrl,
                         CreatedDate = DateTime.Now
                     });
                 }

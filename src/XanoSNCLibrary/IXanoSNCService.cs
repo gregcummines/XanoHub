@@ -17,7 +17,7 @@ namespace XanoSNCLibrary
         List<NotificationEvent> GetNotificationEvents();
 
         [OperationContract]
-        void Subscribe(Subscriber subscriber, NotificationEvent notificationEvent);
+        void Subscribe(Subscriber subscriber, NotificationEvent notificationEvent, string notifyUrl);
 
         [OperationContract]
         void Unsubscribe(Subscriber subscriber, NotificationEvent notificationEvent);

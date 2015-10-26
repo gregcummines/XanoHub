@@ -1,6 +1,6 @@
-﻿USE [XanoHub]
+﻿USE [XanoServiceNotificationCenter]
 GO
-/****** Object:  Table [dbo].[xNotification]    Script Date: 10/25/2015 7:26:24 PM ******/
+/****** Object:  Table [dbo].[xNotification]    Script Date: 10/26/2015 10:45:57 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17,7 +17,7 @@ CREATE TABLE [dbo].[xNotification](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xNotificationEvent]    Script Date: 10/25/2015 7:26:24 PM ******/
+/****** Object:  Table [dbo].[xNotificationEvent]    Script Date: 10/26/2015 10:45:57 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -34,7 +34,7 @@ CREATE TABLE [dbo].[xNotificationEvent](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xPublisher]    Script Date: 10/25/2015 7:26:24 PM ******/
+/****** Object:  Table [dbo].[xPublisher]    Script Date: 10/26/2015 10:45:57 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -50,7 +50,7 @@ CREATE TABLE [dbo].[xPublisher](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscriber]    Script Date: 10/25/2015 7:26:24 PM ******/
+/****** Object:  Table [dbo].[xSubscriber]    Script Date: 10/26/2015 10:45:57 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -66,7 +66,7 @@ CREATE TABLE [dbo].[xSubscriber](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscription]    Script Date: 10/25/2015 7:26:24 PM ******/
+/****** Object:  Table [dbo].[xSubscription]    Script Date: 10/26/2015 10:45:57 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -77,6 +77,7 @@ CREATE TABLE [dbo].[xSubscription](
 	[SubscriberId] [int] NOT NULL,
 	[NotificationEventId] [int] NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
+	[NotifyURL] [nvarchar](200) NOT NULL,
  CONSTRAINT [PK_Subscription] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -84,7 +85,7 @@ CREATE TABLE [dbo].[xSubscription](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscriptionNotifications]    Script Date: 10/25/2015 7:26:24 PM ******/
+/****** Object:  Table [dbo].[xSubscriptionNotifications]    Script Date: 10/26/2015 10:45:57 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

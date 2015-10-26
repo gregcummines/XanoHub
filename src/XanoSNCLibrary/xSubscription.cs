@@ -25,6 +25,7 @@ namespace XanoSNCLibrary
         public int SubscriberId { get; set; }
         public int NotificationEventId { get; set; }
         public System.DateTime CreatedDate { get; set; }
+        public string NotifyURL { get; set; }
     
         public virtual xNotificationEvent xNotificationEvent { get; set; }
         public virtual xSubscriber xSubscriber { get; set; }

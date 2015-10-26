@@ -50,9 +50,9 @@ namespace XanoSNCLibrary
         {
             return XanoSNCRepository.Instance.GetNotificationEvents();  
         }
-        public void Subscribe(Subscriber subscriber, NotificationEvent notification)
+        public void Subscribe(Subscriber subscriber, NotificationEvent notification, string notifyUrl)
         {
-            XanoSNCRepository.Instance.Subscribe(subscriber, notification);
+            XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrl);
         }
 
         public void Unsubscribe(Subscriber subscriber, NotificationEvent notification)
@@ -92,6 +92,8 @@ namespace XanoSNCLibrary
 
         async private void NotifySubscriber(Publisher publisher, NotificationEvent notificationEvent, Subscriber subscriber)
         {
+            var notifyUrl = XanoSNCRepository.Instance.GetUrlFromSubscription(notificationEvent, subscriber);
+
             HttpClient client = new HttpClient();
 
             // GetStringAsync returns a Task<string>. That means that when you await the
