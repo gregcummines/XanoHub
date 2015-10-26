@@ -76,9 +76,12 @@ namespace XanoSNCLibrary
             using (var db = new XanoSNCEntities())
             {
                 return (from ne in db.xNotificationEvents
+                        join p in db.xPublishers on ne.PublisherId equals p.Id
                           select new NotificationEvent()
                           {
-                              Name = ne.Name 
+                              Name = ne.Name,
+                              Publisher = p.Name, 
+                              JsonSchema = ne.JsonSchema
                           }).ToList();
             }
         }

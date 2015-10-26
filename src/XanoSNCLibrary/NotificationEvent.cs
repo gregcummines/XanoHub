@@ -12,5 +12,9 @@ namespace XanoSNCLibrary
     {
         [DataMember]
         public string Name { get; set; }
+        [DataMember]
+        public string JsonSchema { get; set; }
+        [DataMember]
+        public string Publisher { get; set; }
     }
 }
