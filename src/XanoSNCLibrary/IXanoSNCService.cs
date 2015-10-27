@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Web;
 using System.Text;
 
 namespace XanoSNCLibrary
@@ -17,14 +18,14 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent">Notification event to be created</param>
         /// <param name="jsonSchema">Schema of json object that will later be sent via NotifySubscribers</param>
         [OperationContract]
-        void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent, string jsonSchema);
+        void CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema);
 
         /// <summary>
         /// Returns a list of persisted notification events
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        List<NotificationEvent> GetNotificationEvents();
+        List<string> GetNotificationEvents();
 
         /// <summary>
         /// Allows a subscriber to subscribe to a notification event
@@ -39,7 +40,7 @@ namespace XanoSNCLibrary
         /// Here is an example of how to design a good REST API, but there are many more: http://mark-kirby.co.uk/2013/creating-a-true-rest-api/
         /// </param>
         [OperationContract]
-        void Subscribe(Subscriber subscriber, NotificationEvent notificationEvent, string notifyUrl);
+        void Subscribe(string subscriber, string notificationEvent, string notifyUrl);
 
         /// <summary>
         /// Allows a subscriber to unsubscribe from a notification event. 
@@ -47,7 +48,7 @@ namespace XanoSNCLibrary
         /// <param name="subscriber">Subscriber wanting to unsubscribe</param>
         /// <param name="notificationEvent">Notification event to unsubscribe from</param>
         [OperationContract]
-        void Unsubscribe(Subscriber subscriber, NotificationEvent notificationEvent);
+        void Unsubscribe(string subscriber, string notificationEvent);
 
         /// <summary>
         /// Allows a publisher to notify subscribers of a notification event
@@ -56,6 +57,12 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent">The notification event being published</param>
         /// <param name="json">An object representing a resource that will be POSTED to the Url in the subscription</param>
         [OperationContract]
-        void NotifySubscribers(Publisher publisher, NotificationEvent notificationEvent, string json);
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "notifySubscribers",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void NotifySubscribers(string publisher, string notificationEvent, string json);
     }
 }

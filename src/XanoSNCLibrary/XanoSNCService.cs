@@ -37,7 +37,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="publisher"></param>
         /// <param name="notificationEvent"></param>
-        public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent, string jsonSchema)
+        public void CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
         {
             XanoSNCRepository.Instance.CreateNotificationEvent(publisher, notificationEvent, jsonSchema);
         }
@@ -46,16 +46,16 @@ namespace XanoSNCLibrary
         /// Gets the list of notifications supported by the XanoSNC
         /// </summary>
         /// <returns></returns>
-        public List<NotificationEvent> GetNotificationEvents()
+        public List<string> GetNotificationEvents()
         {
             return XanoSNCRepository.Instance.GetNotificationEvents();  
         }
-        public void Subscribe(Subscriber subscriber, NotificationEvent notification, string notifyUrl)
+        public void Subscribe(string subscriber, string notification, string notifyUrl)
         {
             XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrl);
         }
 
-        public void Unsubscribe(Subscriber subscriber, NotificationEvent notification)
+        public void Unsubscribe(string subscriber, string notification)
         {
             XanoSNCRepository.Instance.Unsubscribe(subscriber, notification);
         }
@@ -66,7 +66,7 @@ namespace XanoSNCLibrary
         /// <param name="publisher">publisher that published the notification event</param>
         /// <param name="notificationEvent">notification event being published</param>
         /// <param name="json">json object with more information about the notification event</param>
-        public void NotifySubscribers(Publisher publisher, NotificationEvent notificationEvent, string json)
+        public void NotifySubscribers(string publisher, string notificationEvent, string json)
         {
             // Let the repository know that we are starting a notify, so that a Notification record
             // can be created to track everything
@@ -91,7 +91,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        async private void NotifySubscriber(Publisher publisher, NotificationEvent notificationEvent, Subscriber subscriber, string json)
+        async private void NotifySubscriber(string publisher, string notificationEvent, string subscriber, string json)
         {
             var notifyUrl = XanoSNCRepository.Instance.GetUrlFromSubscription(notificationEvent, subscriber);
 

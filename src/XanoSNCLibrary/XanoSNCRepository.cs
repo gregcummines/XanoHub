@@ -22,19 +22,19 @@ namespace XanoSNCLibrary
         /// <param name="publisher"></param>
         /// <param name="notificationEvent"></param>
         /// <param name="jsonSchema">json Schema for the notification message that will be sent to subscribers</param>
-        public void CreateNotificationEvent(Publisher publisher, NotificationEvent notificationEvent, string jsonSchema)
+        public void CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
         {
             using (var db = new XanoSNCEntities())
             {
                 var publisherId = 0;
                 var xPublisher = (from p in db.xPublishers
-                                  where p.Name == publisher.Name
+                                  where p.Name == publisher
                                   select p).SingleOrDefault();
                 if (xPublisher == null)
                 {
                     var newPublisher = new xPublisher()
                     {
-                        Name = publisher.Name,
+                        Name = publisher,
                         CreatedDate = DateTime.Now
                     };
                     db.xPublishers.Add(newPublisher);
@@ -46,13 +46,13 @@ namespace XanoSNCLibrary
                 }
 
                 var xNotificationEvent = (from ne in db.xNotificationEvents
-                                  where ne.Name == notificationEvent.Name
+                                  where ne.Name == notificationEvent
                                   select ne).SingleOrDefault();
                 if (xNotificationEvent == null)
                 {
                     db.xNotificationEvents.Add(new xNotificationEvent()
                     {
-                        Name = notificationEvent.Name,
+                        Name = notificationEvent,
                         PublisherId = publisherId,
                         JsonSchema = jsonSchema,                
                         CreatedDate = DateTime.Now
@@ -60,7 +60,7 @@ namespace XanoSNCLibrary
                 }
                 else
                 {
-                    throw new Exception("Notification: " + notificationEvent.Name + " already exists.");
+                    throw new Exception("Notification: " + notificationEvent + " already exists.");
                 }
 
                 db.SaveChanges();
@@ -71,18 +71,13 @@ namespace XanoSNCLibrary
         /// Gets a list of all notification types from the database
         /// </summary>
         /// <returns></returns>
-        public List<NotificationEvent> GetNotificationEvents()
+        public List<string> GetNotificationEvents()
         {
             using (var db = new XanoSNCEntities())
             {
                 return (from ne in db.xNotificationEvents
                         join p in db.xPublishers on ne.PublisherId equals p.Id
-                          select new NotificationEvent()
-                          {
-                              Name = ne.Name,
-                              Publisher = p.Name, 
-                              JsonSchema = ne.JsonSchema
-                          }).ToList();
+                          select ne.Name).ToList();
             }
         }
 
@@ -122,25 +117,25 @@ namespace XanoSNCLibrary
             }
         }
 
-        internal string GetUrlFromSubscription(NotificationEvent notificationEvent, Subscriber subscriber)
+        internal string GetUrlFromSubscription(string notificationEvent, string subscriber)
         {
             using (var db = new XanoSNCEntities())
             {
                 var xNotificationEvent = (from ne in db.xNotificationEvents
-                                          where ne.Name == notificationEvent.Name
+                                          where ne.Name == notificationEvent
                                           select ne).SingleOrDefault();
                 if (xNotificationEvent == null)
                 {
-                    throw new Exception("Notification event with name: " + notificationEvent.Name + " has not been published.");
+                    throw new Exception("Notification event with name: " + notificationEvent + " has not been published.");
                 }
 
                 var subscriberId = 0;
                 var xSubscriber = (from s in db.xSubscribers
-                                   where s.Name == subscriber.Name
+                                   where s.Name == subscriber
                                    select s).SingleOrDefault();
                 if (xSubscriber == null)
                 {
-                    throw new Exception("Subscriber " + subscriber.Name + " does not exist");
+                    throw new Exception("Subscriber " + subscriber + " does not exist");
                 }
                 else
                 {
@@ -154,7 +149,7 @@ namespace XanoSNCLibrary
 
                 if (notifyUrl == null)
                 {
-                    throw new Exception("Subscription for " + notificationEvent.Name + "not found for " + subscriber.Name);
+                    throw new Exception("Subscription for " + notificationEvent + "not found for " + subscriber);
                 }
                 return notifyUrl;
             }
@@ -165,7 +160,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="notification"></param>
         /// <returns></returns>
-        public List<Subscriber> GetSubscribersForNotification(NotificationEvent notification)
+        public List<string> GetSubscribersForNotification(string notification)
         {
             return null;
         }
@@ -175,27 +170,27 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <param name="notification"></param>
-        public void Subscribe(Subscriber subscriber, NotificationEvent notificationEvent, string notifyUrl)
+        public void Subscribe(string subscriber, string notificationEvent, string notifyUrl)
         {
             using (var db = new XanoSNCEntities())
             {
                 var xNotificationEvent = (from ne in db.xNotificationEvents
-                                          where ne.Name == notificationEvent.Name
+                                          where ne.Name == notificationEvent
                                           select ne).SingleOrDefault();
                 if (xNotificationEvent == null)
                 {
-                    throw new Exception("Notification event with name: " + notificationEvent.Name + " has not been published.");
+                    throw new Exception("Notification event with name: " + notificationEvent + " has not been published.");
                 }
 
                 var subscriberId = 0;
                 var xSubscriber = (from s in db.xSubscribers
-                                  where s.Name == subscriber.Name
+                                  where s.Name == subscriber
                                   select s).SingleOrDefault();
                 if (xSubscriber == null)
                 {
                     var newSubscriber = new xSubscriber()
                     {
-                        Name = subscriber.Name,
+                        Name = subscriber,
                         CreatedDate = DateTime.Now
                     };
                     db.xSubscribers.Add(newSubscriber);
@@ -209,7 +204,7 @@ namespace XanoSNCLibrary
                 var xSubscriptionDB = (from sc in db.xSubscriptions
                                      join sb in db.xSubscribers on sc.SubscriberId equals sb.Id
                                      join ne in db.xNotificationEvents on sc.NotificationEventId equals ne.Id
-                                     where ne.Name == notificationEvent.Name && sb.Name == subscriber.Name 
+                                     where ne.Name == notificationEvent && sb.Name == subscriber 
                                      select new
                                      {
                                          SubscriberName = sb.Name, 
@@ -229,7 +224,7 @@ namespace XanoSNCLibrary
                 }
                 else
                 {
-                    throw new Exception("Subscription: " + notificationEvent.Name + " already exists.");
+                    throw new Exception("Subscription: " + notificationEvent + " already exists.");
                 }
 
                 db.SaveChanges();
@@ -242,7 +237,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <param name="notification"></param>
-        public void Unsubscribe(Subscriber subscriber, NotificationEvent notification)
+        public void Unsubscribe(string subscriber, string notification)
         {
 
         }
@@ -252,17 +247,17 @@ namespace XanoSNCLibrary
         /// Tracks an outgoing SNC notification attempt to subscribers in the database
         /// </summary>
         /// <param name="notificationEvent"></param>
-        public int CreateNotification(Publisher publisher, NotificationEvent notificationEvent)
+        public int CreateNotification(string publisher, string notificationEvent)
         {
             // Insert a notification record
             using (var db = new XanoSNCEntities())
             {
                 // Lookup the notification event by name 
                 var notificationEventDB = (from ne in db.xNotificationEvents
-                                           where ne.Name == notificationEvent.Name
+                                           where ne.Name == notificationEvent
                                            select ne).SingleOrDefault();
                 if (notificationEventDB == null)
-                    throw new Exception("Notification by name: " + notificationEvent.Name + " does not exist");
+                    throw new Exception("Notification by name: " + notificationEvent + " does not exist");
 
                 var notification = new xNotification()
                 {
@@ -284,7 +279,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationId">Id of the notification record</param>
         /// <param name="subscriber">Subscriber we attempted to contact</param>
         /// <param name="errorMessage">If an error occurred, this will be a non-null string with the message</param>
-        public void CreateSubscriptionNotification(int notificationId, Subscriber subscriber, string errorMessage)
+        public void CreateSubscriptionNotification(int notificationId, string subscriber, string errorMessage)
         {
             // Find the subscription id by subscriber name and notification event name
             // We need it to create a list of records for each subscriber that we attemped to contact
