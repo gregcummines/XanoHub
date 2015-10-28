@@ -18,6 +18,12 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent">Notification event to be created</param>
         /// <param name="jsonSchema">Schema of json object that will later be sent via NotifySubscribers</param>
         [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "createNotificationEvent",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
         void CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema);
 
         /// <summary>
@@ -25,6 +31,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <returns></returns>
         [OperationContract]
+        [WebGet]
         List<string> GetNotificationEvents();
 
         /// <summary>
@@ -40,6 +47,12 @@ namespace XanoSNCLibrary
         /// Here is an example of how to design a good REST API, but there are many more: http://mark-kirby.co.uk/2013/creating-a-true-rest-api/
         /// </param>
         [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "subscribe",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
         void Subscribe(string subscriber, string notificationEvent, string notifyUrl);
 
         /// <summary>
@@ -48,6 +61,12 @@ namespace XanoSNCLibrary
         /// <param name="subscriber">Subscriber wanting to unsubscribe</param>
         /// <param name="notificationEvent">Notification event to unsubscribe from</param>
         [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "unsubscribe",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
         void Unsubscribe(string subscriber, string notificationEvent);
 
         /// <summary>
@@ -59,10 +78,10 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "notifySubscribers",
+            UriTemplate = "notifySubscribers/{publisher}/{notificationEvent}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare)]
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
         void NotifySubscribers(string publisher, string notificationEvent, string json);
     }
 }
