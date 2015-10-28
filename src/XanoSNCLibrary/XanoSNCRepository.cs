@@ -288,9 +288,8 @@ namespace XanoSNCLibrary
                                           select sc).SingleOrDefault();
                     // Delete the subscription
                     db.xSubscriptions.Remove(subscriptionDB);
+                    db.SaveChanges();
                 }
-
-                db.SaveChanges();
             }
         }
 
