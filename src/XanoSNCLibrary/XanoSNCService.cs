@@ -50,14 +50,15 @@ namespace XanoSNCLibrary
         {
             return XanoSNCRepository.Instance.GetNotificationEvents();  
         }
-        public void Subscribe(string subscriber, string notification, string notifyUrl)
+        public string Subscribe(string subscriber, string notification, string notifyUrl)
         {
-            XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrl);
+            var token = XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrl);
+            return token;
         }
 
-        public void Unsubscribe(string subscriber, string notification)
+        public void Unsubscribe(string subscriber, string notificationEvent, string token)
         {
-            XanoSNCRepository.Instance.Unsubscribe(subscriber, notification);
+            XanoSNCRepository.Instance.Unsubscribe(subscriber, notificationEvent, token);
         }
 
         /// <summary>

@@ -165,15 +165,19 @@ namespace XanoSNCLibrary
             return null;
         }
 
+
         /// <summary>
         /// Stores a service subscription to a notification in the database
         /// </summary>
         /// <param name="subscriber"></param>
-        /// <param name="notification"></param>
-        public void Subscribe(string subscriber, string notificationEvent, string notifyUrl)
+        /// <param name="notificationEvent"></param>
+        /// <param name="notifyUrl"></param>
+        /// <returns>A token that must be used when unsubscribing</returns>
+        public string Subscribe(string subscriber, string notificationEvent, string notifyUrl)
         {
             using (var db = new XanoSNCEntities())
             {
+                var token = Guid.NewGuid().ToString();
                 var xNotificationEvent = (from ne in db.xNotificationEvents
                                           where ne.Name == notificationEvent
                                           select ne).SingleOrDefault();
@@ -212,13 +216,14 @@ namespace XanoSNCLibrary
                                          NotificationEventId = ne.Id,
                                          SubscriberId = sb.Id
                                      }).SingleOrDefault();
-                if (xNotificationEvent == null)
+                if (xSubscriptionDB == null)
                 {
                     db.xSubscriptions.Add(new xSubscription()
                     {
                         NotificationEventId = xSubscriptionDB.NotificationEventId,
                         SubscriberId = xSubscriptionDB.SubscriberId,
                         NotifyURL = notifyUrl,
+                        Token = token,
                         CreatedDate = DateTime.Now
                     });
                 }
@@ -228,6 +233,8 @@ namespace XanoSNCLibrary
                 }
 
                 db.SaveChanges();
+
+                return token;
             }
 
         }
@@ -236,10 +243,55 @@ namespace XanoSNCLibrary
         /// Removes a service subscription to a notification in the database
         /// </summary>
         /// <param name="subscriber"></param>
-        /// <param name="notification"></param>
-        public void Unsubscribe(string subscriber, string notification)
+        /// <param name="notificationEvent"></param>
+        /// <param name="token">A token issued by the subscribe method</param>
+        public void Unsubscribe(string subscriber, string notificationEvent, string token)
         {
+            using (var db = new XanoSNCEntities())
+            {
+                var xNotificationEvent = (from ne in db.xNotificationEvents
+                                          where ne.Name == notificationEvent
+                                          select ne).SingleOrDefault();
+                if (xNotificationEvent == null)
+                {
+                    throw new Exception("Notification event with name: " + notificationEvent + " has not been published.");
+                }
 
+                var xSubscriber = (from s in db.xSubscribers
+                                   where s.Name == subscriber
+                                   select s).SingleOrDefault();
+                if (xSubscriber == null)
+                {
+                    throw new Exception("No subscriber with name: " + subscriber + " found.");
+                }
+
+                var xSubscriptionDB = (from sc in db.xSubscriptions
+                                       join sb in db.xSubscribers on sc.SubscriberId equals sb.Id
+                                       join ne in db.xNotificationEvents on sc.NotificationEventId equals ne.Id
+                                       where ne.Name == notificationEvent && sb.Name == subscriber && sc.Token == token
+                                       select new
+                                       {
+                                           SubscriberName = sb.Name,
+                                           NotificationEvent = ne.Name,
+                                           NotificationEventId = ne.Id,
+                                           SubscriberId = sb.Id,
+                                           SubscriptionId = sc.Id
+                                       }).SingleOrDefault();
+                if (xSubscriptionDB == null)
+                {
+                    throw new Exception("Subscription for subscriber " + subscriber + " for notification event " + notificationEvent + " not found with token " + token);
+                }
+                else
+                {
+                    var subscriptionDB = (from sc in db.xSubscriptions
+                                          where sc.Id == xSubscriptionDB.SubscriptionId
+                                          select sc).SingleOrDefault();
+                    // Delete the subscription
+                    db.xSubscriptions.Remove(subscriptionDB);
+                }
+
+                db.SaveChanges();
+            }
         }
 
         /// <summary>

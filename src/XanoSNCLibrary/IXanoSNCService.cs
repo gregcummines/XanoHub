@@ -20,7 +20,7 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "createNotificationEvent",
+            UriTemplate = "createNotificationEvent/{publisher}/{notificationEvent}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
@@ -49,11 +49,11 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "subscribe",
+            UriTemplate = "subscribe/{subscriber}/{notificationEvent}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        void Subscribe(string subscriber, string notificationEvent, string notifyUrl);
+        string Subscribe(string subscriber, string notificationEvent, string notifyUrl);
 
         /// <summary>
         /// Allows a subscriber to unsubscribe from a notification event. 
@@ -63,11 +63,11 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "unsubscribe",
+            UriTemplate = "unsubscribe/{subscriber}/{notificationEvent}/{token}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        void Unsubscribe(string subscriber, string notificationEvent);
+        void Unsubscribe(string subscriber, string notificationEvent, string token);
 
         /// <summary>
         /// Allows a publisher to notify subscribers of a notification event
