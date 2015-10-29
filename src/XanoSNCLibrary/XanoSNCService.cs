@@ -69,6 +69,13 @@ namespace XanoSNCLibrary
         /// <param name="json">json object with more information about the notification event</param>
         public void NotifySubscribers(string publisher, string notificationEvent, string json)
         {
+            if (publisher == null)
+                throw new ArgumentException("publisher must not be null");
+            if (notificationEvent == null)
+                throw new ArgumentException("notificationEvent must not be null");
+            if (json == null)
+                throw new ArgumentException("json object must not be null");
+
             // Let the repository know that we are starting a notify, so that a Notification record
             // can be created to track everything
             var notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent);
