@@ -95,6 +95,18 @@ namespace XanoSNCLibrary
             }
         }
 
+        public string GetNotificationEventMessageSchema(string notificationEvent)
+        {
+            using (var db = new XanoSNCEntities())
+            {
+                var schema = (from ne in db.xNotificationEvents
+                              where ne.Name == notificationEvent
+                              select ne.JsonSchema).Single();
+
+                return schema;
+            }
+        }
+
         /// <summary>
         /// Gets an active list of notifications for the subscriber
         /// </summary>

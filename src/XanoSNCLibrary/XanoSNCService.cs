@@ -39,16 +39,16 @@ namespace XanoSNCLibrary
         /// any subscribers of changes. 
         /// </summary>
         /// <param name="request"></param>
-        public void CreateNotificationEvent(CreateNotificationEventRequest request)
+        public void CreateNotificationEvent(string publisher, string notificationEvent, Stream jsonSchema)
         {
-            //string jsonSchema = string.Empty;
-            //using (var reader = new StreamReader(request.JsonSchema))
-            //{
-            //    jsonSchema = reader.ReadToEnd();
-            //}
+            string jsonSchemaString = string.Empty;
+            using (var reader = new StreamReader(jsonSchema))
+            {
+                jsonSchemaString = reader.ReadToEnd();
+            }
             try
             {
-                XanoSNCRepository.Instance.CreateNotificationEvent(request.Publisher, request.NotificationEvent, string.Empty);
+                XanoSNCRepository.Instance.CreateNotificationEvent(publisher, notificationEvent, jsonSchemaString);
             }
             catch(Exception e)
             {
@@ -72,6 +72,24 @@ namespace XanoSNCLibrary
             }
             return null;
         }
+
+        public Stream GetNotificationEventMessageSchema(string notificationEvent)
+        {
+            var jsonSchemaString = string.Empty;
+            try
+            {
+                jsonSchemaString = XanoSNCRepository.Instance.GetNotificationEventMessageSchema(notificationEvent);
+            }
+            catch (Exception e)
+            {
+                ThrowWebFaultOnRepositoryException(e);
+            }
+
+            WebOperationContext.Current.OutgoingResponse.ContentType =
+                "application/json; charset=utf-8";
+            return new MemoryStream(Encoding.UTF8.GetBytes(jsonSchemaString));
+        }
+
         public string Subscribe(string subscriber, string notification, string notifyUrl)
         {
             try
@@ -199,6 +217,15 @@ namespace XanoSNCLibrary
         public string TestPostMe(string test)
         {
             return "POST Result is " + test;
+        }
+
+        public void TestPostStream(string myString, Stream stream)
+        {
+            string jsonString = string.Empty;
+            using (var reader = new StreamReader(stream))
+            {
+                jsonString = reader.ReadToEnd();
+            }
         }
     }
 }

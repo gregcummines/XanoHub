@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Headers; // For AuthenticationHeaderValue
+using System.Web;
 
 namespace XanoServiceNotificationCenterTestPublisher
 {
@@ -21,6 +22,7 @@ namespace XanoServiceNotificationCenterTestPublisher
         {
             TestGetMe();
             TestPostMe();
+            TestPostSteam();
             Publisher_CreateNotificationEvent();
             GetNotificationEvents();
             //Publisher_SendNotification();
@@ -53,17 +55,33 @@ namespace XanoServiceNotificationCenterTestPublisher
            }
         }
 
+        private static void TestPostSteam()
+        {
+            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
+            {
+                var url = "http://localhost:8733/XanoServiceNotificationCenter/testPostStream/thisismystring";
+                var jsonSchema = "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"id\":\"http://jsonschema.net\",\"type\":\"object\",\"properties\":{\"FirmwarePackageVersion\":{\"id\":\"http://jsonschema.net/FirmwarePackageVersion\",\"type\":\"string\"},\"FirmwareConfigurationVersion\":{\"id\":\"http://jsonschema.net/FirmwareConfigurationVersion\",\"type\":\"string\"}},\"required\":[\"FirmwarePackageVersion\",\"FirmwareConfigurationVersion\"]}";
+
+                var stringContent = new StringContent(jsonSchema, Encoding.UTF8);
+
+                var httpResponseMessage = httpClient.PostAsync(url, stringContent);
+                var result = httpResponseMessage.Result;
+                var jsonResult = result.Content.ReadAsStringAsync().Result;
+                dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
+            }
+        }
+
         static void Publisher_CreateNotificationEvent()
         {
             using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
             {
-                //var jsonSchema = "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"id\":\"http://jsonschema.net\",\"type\":\"object\",\"properties\":{\"FirmwarePackageVersion\":{\"id\":\"http://jsonschema.net/FirmwarePackageVersion\",\"type\":\"string\"},\"FirmwareConfigurationVersion\":{\"id\":\"http://jsonschema.net/FirmwareConfigurationVersion\",\"type\":\"string\"}},\"required\":[\"FirmwarePackageVersion\",\"FirmwareConfigurationVersion\"]}";
-                //var json = "{ \"Publisher\": \"Roka\", \"NotificationEvent\": \"FirmwareRelease\", \"JsonSchema\": " + jsonSchema + "}"; 
+                var jsonSchema = "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"id\":\"http://jsonschema.net\",\"type\":\"object\",\"properties\":{\"FirmwarePackageVersion\":{\"id\":\"http://jsonschema.net/FirmwarePackageVersion\",\"type\":\"string\"},\"FirmwareConfigurationVersion\":{\"id\":\"http://jsonschema.net/FirmwareConfigurationVersion\",\"type\":\"string\"}},\"required\":[\"FirmwarePackageVersion\",\"FirmwareConfigurationVersion\"]}";
+                var stringContent = new StringContent(jsonSchema, Encoding.UTF8);
+                var publisher = "Roka";
+                var notificationEvent = "FirmwareRelease";
 
-                var json = "{ \"Publisher\": \"Roka\", \"NotificationEvent\": \"FirmwareRelease\" }";
-                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var url = "http://localhost:8733/XanoServiceNotificationCenter/createNotificationEvent";
+                var url = $"http://localhost:8733/XanoServiceNotificationCenter/createNotificationEvent/{publisher}/{notificationEvent}";
+                url = HttpUtility.UrlPathEncode(url);
                 var response = httpClient.PostAsync(url, stringContent).Result;
                 if (response.IsSuccessStatusCode)
                 {

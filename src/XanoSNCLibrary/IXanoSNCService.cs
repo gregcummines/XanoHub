@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -37,6 +38,13 @@ namespace XanoSNCLibrary
             ResponseFormat = WebMessageFormat.Json)]
         string TestPostMe(string test);
 
+        [OperationContract]
+        [WebInvoke(
+        Method = "POST",
+        UriTemplate = "testPostStream/{myString}",
+        ResponseFormat = WebMessageFormat.Json)]
+        void TestPostStream(string myString, Stream stream);
+
         /// <summary>
         /// Allows a publisher to create a notification event type that subscribers can subscribe to
         /// </summary>
@@ -44,10 +52,9 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "createNotificationEvent",
-            RequestFormat = WebMessageFormat.Json,
+            UriTemplate = "createNotificationEvent/{publisher}/{notificationEvent}",
             ResponseFormat = WebMessageFormat.Json)]
-        void CreateNotificationEvent(CreateNotificationEventRequest request);
+        void CreateNotificationEvent(string publisher, string notificationEvent, Stream jsonSchema);
 
         /// <summary>
         /// Returns a list of persisted notification events
@@ -56,6 +63,14 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebGet(ResponseFormat = WebMessageFormat.Json)]
         List<string> GetNotificationEvents();
+
+        /// <summary>
+        /// Gets the json schema associated with the message sent with a notify is sent out
+        /// </summary>
+        /// <returns></returns>
+        [OperationContract]
+        [WebGet]
+        Stream GetNotificationEventMessageSchema(string notificationEvent);
 
         /// <summary>
         /// Allows a subscriber to subscribe to a notification event
