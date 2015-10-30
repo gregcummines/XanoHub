@@ -35,16 +35,6 @@ namespace XanoServiceNotificationCenterTestPublisher
                 var result = httpResponseMessage.Result;
                 var jsonResult = result.Content.ReadAsStringAsync().Result;
                 dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
-
-
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    Log("Success");
-                //}
-                //else
-                //{
-                //    Log("Error. The status code was " + response.StatusCode);
-                //}
             }
         }
 
@@ -60,16 +50,7 @@ namespace XanoServiceNotificationCenterTestPublisher
                 var result = httpResponseMessage.Result;
                 var jsonResult = result.Content.ReadAsStringAsync().Result;
                 dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
-
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    Log("Success");
-                //}
-                //else
-                //{
-                //    Log("Error. The status code was " + response.StatusCode);
-                //}
-            }
+           }
         }
 
         static void Publisher_CreateNotificationEvent()

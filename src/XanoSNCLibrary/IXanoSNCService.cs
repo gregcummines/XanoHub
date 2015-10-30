@@ -16,7 +16,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="test"></param>
         /// <returns></returns>
-        /// [OperationContract]
+        [OperationContract]
         [WebInvoke(
             Method = "GET",
             UriTemplate = "testGetMe/{test}",
@@ -29,7 +29,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="test"></param>
         /// <returns></returns>
-        /// [OperationContract]
+        [OperationContract]
         [WebInvoke(
             Method = "POST",
             UriTemplate = "testPostMe",
