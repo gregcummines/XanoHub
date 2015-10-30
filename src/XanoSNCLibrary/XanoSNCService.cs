@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading;
@@ -185,6 +186,13 @@ namespace XanoSNCLibrary
 
         public string TestGetMe(string test)
         {
+            OperationContext context = OperationContext.Current;
+
+            if (context != null)
+            {
+                MessageProperties messageProperties = context.IncomingMessageProperties;
+            }
+
             return "GET Result is " + test;
         }
 

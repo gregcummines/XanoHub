@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Http.Headers; // For AuthenticationHeaderValue
 
 namespace XanoServiceNotificationCenterTestPublisher
 {
@@ -27,7 +28,7 @@ namespace XanoServiceNotificationCenterTestPublisher
 
         private static void TestGetMe()
         {
-            using (var httpClient = new HttpClient())
+            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
             {
                 var url = "http://localhost:8733/XanoServiceNotificationCenter/testGetMe/myString";
                 var httpResponseMessage = httpClient.GetAsync(url);
@@ -49,7 +50,7 @@ namespace XanoServiceNotificationCenterTestPublisher
 
         private static void TestPostMe()
         {
-            using (var httpClient = new HttpClient())
+            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
             {
                 var url = "http://localhost:8733/XanoServiceNotificationCenter/testPostMe";
                 string json = "\"This is a test\"";
@@ -73,7 +74,7 @@ namespace XanoServiceNotificationCenterTestPublisher
 
         static void Publisher_CreateNotificationEvent()
         {
-            using (var httpClient = new HttpClient())
+            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
             {
                 //var jsonSchema = "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"id\":\"http://jsonschema.net\",\"type\":\"object\",\"properties\":{\"FirmwarePackageVersion\":{\"id\":\"http://jsonschema.net/FirmwarePackageVersion\",\"type\":\"string\"},\"FirmwareConfigurationVersion\":{\"id\":\"http://jsonschema.net/FirmwareConfigurationVersion\",\"type\":\"string\"}},\"required\":[\"FirmwarePackageVersion\",\"FirmwareConfigurationVersion\"]}";
                 //var json = "{ \"Publisher\": \"Roka\", \"NotificationEvent\": \"FirmwareRelease\", \"JsonSchema\": " + jsonSchema + "}"; 
@@ -97,7 +98,7 @@ namespace XanoServiceNotificationCenterTestPublisher
 
         static void GetNotificationEvents()
         {
-            using (var httpClient = new HttpClient())
+            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
             {
                 var url = "http://localhost:8733/XanoServiceNotificationCenter/getNotificationEvents";
                 var httpResponseMessage = httpClient.GetAsync(url);
@@ -109,7 +110,7 @@ namespace XanoServiceNotificationCenterTestPublisher
 
         static async void Publisher_SendNotification()
         {
-            using (var httpClient = new HttpClient())
+            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
             {
                 string json = "{ \"FirmwarePackageVersion\": \"5.0.1.9\", \"FirmwareConfigurationVersion\": \"9.1.1.3.0\" }";
                 var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
