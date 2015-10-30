@@ -162,9 +162,16 @@ namespace XanoSNCLibrary
         /// <returns></returns>
         public List<string> GetSubscribersForNotification(string notification)
         {
-            return null;
+            using (var db = new XanoSNCEntities())
+            {
+                var subscribers = (from sc in db.xSubscriptions
+                                   join sb in db.xSubscribers on sc.SubscriberId equals sb.Id
+                                   join ne in db.xNotificationEvents on sc.NotificationEventId equals ne.Id
+                                   where ne.Name == notification
+                                   select sb.Name).ToList();
+                return subscribers;
+            }
         }
-
 
         /// <summary>
         /// Stores a service subscription to a notification in the database
@@ -236,7 +243,6 @@ namespace XanoSNCLibrary
 
                 return token;
             }
-
         }
 
         /// <summary>
@@ -319,9 +325,9 @@ namespace XanoSNCLibrary
                 db.xNotifications.Add(notification);
 
                 db.SaveChanges();
-            }
 
-            return 0;
+                return notification.Id;
+            }
         }
 
         /// <summary>

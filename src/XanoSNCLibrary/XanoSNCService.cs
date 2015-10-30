@@ -136,16 +136,18 @@ namespace XanoSNCLibrary
 
             foreach (var subscriber in subscribers)
             {
-                var errorMessage = string.Empty;    // todo: fill in the string
+                var errorMessage = string.Empty;    
 
                 try
                 {
+                    // Try to notify each subscriber
                     NotifySubscriber(publisher, notificationEvent, subscriber, json);
                 }
                 catch(Exception e)
                 {
-                    var errorData = new ErrorData("General error", e.Message);
-                    throw new WebFaultException<ErrorData>(errorData, System.Net.HttpStatusCode.NotFound);
+                    // catch the exception. We are going to create a subscription notification record below
+                    // and we need to log the fact that we ran into problems. 
+                    errorMessage = e.Message;
                 }
 
                 try
@@ -178,7 +180,7 @@ namespace XanoSNCLibrary
         private void ThrowWebFaultOnRepositoryException(Exception e)
         {
             var errorData = new ErrorData("Repository error", e.Message);
-            throw new WebFaultException<ErrorData>(errorData, System.Net.HttpStatusCode.BadRequest);
+            throw new WebFaultException<ErrorData>(errorData, System.Net.HttpStatusCode.InternalServerError);
         }
 
         public string TestGetMe(string test)
