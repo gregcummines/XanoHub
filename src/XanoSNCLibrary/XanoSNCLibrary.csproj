@@ -68,6 +68,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateNotificationEventRequest.cs" />
+    <Compile Include="ErrorData.cs" />
     <Compile Include="IXanoSNCService.cs" />
     <Compile Include="Publisher.cs" />
     <Compile Include="XanoSNCModel.Context.cs">

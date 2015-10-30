@@ -12,26 +12,49 @@ namespace XanoSNCLibrary
     public interface IXanoSNCService
     {
         /// <summary>
+        /// Test GET Method
+        /// </summary>
+        /// <param name="test"></param>
+        /// <returns></returns>
+        /// [OperationContract]
+        [WebInvoke(
+            Method = "GET",
+            UriTemplate = "testGetMe/{test}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string TestGetMe(string test);
+
+        /// <summary>
+        /// Test POST Method
+        /// </summary>
+        /// <param name="test"></param>
+        /// <returns></returns>
+        /// [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "testPostMe",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string TestPostMe(string test);
+
+        /// <summary>
         /// Allows a publisher to create a notification event type that subscribers can subscribe to
         /// </summary>
-        /// <param name="publisher">Publisher creating the notification event</param>
-        /// <param name="notificationEvent">Notification event to be created</param>
-        /// <param name="jsonSchema">Schema of json object that will later be sent via NotifySubscribers</param>
+        /// <param name="request"></param>
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "createNotificationEvent/{publisher}/{notificationEvent}",
+            UriTemplate = "createNotificationEvent",
             RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped)]
-        void CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema);
+            ResponseFormat = WebMessageFormat.Json)]
+        void CreateNotificationEvent(CreateNotificationEventRequest request);
 
         /// <summary>
         /// Returns a list of persisted notification events
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        [WebGet]
+        [WebGet(ResponseFormat = WebMessageFormat.Json)]
         List<string> GetNotificationEvents();
 
         /// <summary>

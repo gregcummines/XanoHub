@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Web;
 using System.Text;
 using System.Threading;
 
@@ -35,11 +37,22 @@ namespace XanoSNCLibrary
         /// Used to create a notification. Any service can create a notification and notify
         /// any subscribers of changes. 
         /// </summary>
-        /// <param name="publisher"></param>
-        /// <param name="notificationEvent"></param>
-        public void CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
+        /// <param name="request"></param>
+        public void CreateNotificationEvent(CreateNotificationEventRequest request)
         {
-            XanoSNCRepository.Instance.CreateNotificationEvent(publisher, notificationEvent, jsonSchema);
+            //string jsonSchema = string.Empty;
+            //using (var reader = new StreamReader(request.JsonSchema))
+            //{
+            //    jsonSchema = reader.ReadToEnd();
+            //}
+            try
+            {
+                XanoSNCRepository.Instance.CreateNotificationEvent(request.Publisher, request.NotificationEvent, string.Empty);
+            }
+            catch(Exception e)
+            {
+                ThrowWebFaultOnRepositoryException(e);
+            }
         }
 
         /// <summary>
@@ -48,17 +61,39 @@ namespace XanoSNCLibrary
         /// <returns></returns>
         public List<string> GetNotificationEvents()
         {
-            return XanoSNCRepository.Instance.GetNotificationEvents();  
+            try
+            {
+                return XanoSNCRepository.Instance.GetNotificationEvents();
+            }
+            catch(Exception e)
+            {
+                ThrowWebFaultOnRepositoryException(e);
+            }
+            return null;
         }
         public string Subscribe(string subscriber, string notification, string notifyUrl)
         {
-            var token = XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrl);
-            return token;
+            try
+            {
+                return XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrl);
+            }
+            catch (Exception e)
+            {
+                ThrowWebFaultOnRepositoryException(e);
+            }
+            return null;
         }
 
         public void Unsubscribe(string subscriber, string notificationEvent, string token)
         {
-            XanoSNCRepository.Instance.Unsubscribe(subscriber, notificationEvent, token);
+            try
+            {
+                XanoSNCRepository.Instance.Unsubscribe(subscriber, notificationEvent, token);
+            }
+            catch (Exception e)
+            {
+                ThrowWebFaultOnRepositoryException(e);
+            }
         }
 
         /// <summary>
@@ -78,11 +113,28 @@ namespace XanoSNCLibrary
 
             // Let the repository know that we are starting a notify, so that a Notification record
             // can be created to track everything
-            var notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent);
+            int notificationId = 0;
+            try
+            {
+                notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent);
+            }
+            catch (Exception e)
+            {
+                ThrowWebFaultOnRepositoryException(e);
+            }
 
             // Find all the subscribers that want to know about this notification
-            var subscribers = XanoSNCRepository.Instance.GetSubscribersForNotification(notificationEvent);
-            foreach(var subscriber in subscribers)
+            List<string> subscribers = null;
+            try
+            {
+                subscribers = XanoSNCRepository.Instance.GetSubscribersForNotification(notificationEvent);
+            }
+            catch (Exception e)
+            {
+                ThrowWebFaultOnRepositoryException(e);
+            }
+
+            foreach (var subscriber in subscribers)
             {
                 var errorMessage = string.Empty;    // todo: fill in the string
 
@@ -92,10 +144,18 @@ namespace XanoSNCLibrary
                 }
                 catch(Exception e)
                 {
-                    errorMessage = e.Message;
+                    var errorData = new ErrorData("General error", e.Message);
+                    throw new WebFaultException<ErrorData>(errorData, System.Net.HttpStatusCode.NotFound);
                 }
 
-                XanoSNCRepository.Instance.CreateSubscriptionNotification(notificationId, subscriber, errorMessage);
+                try
+                {
+                    XanoSNCRepository.Instance.CreateSubscriptionNotification(notificationId, subscriber, errorMessage);
+                }
+                catch (Exception e)
+                {
+                    ThrowWebFaultOnRepositoryException(e);
+                }
             }
         }
 
@@ -113,6 +173,22 @@ namespace XanoSNCLibrary
                     throw new Exception("Status code is " + response.StatusCode);
                 }
             }
+        }
+
+        private void ThrowWebFaultOnRepositoryException(Exception e)
+        {
+            var errorData = new ErrorData("Repository error", e.Message);
+            throw new WebFaultException<ErrorData>(errorData, System.Net.HttpStatusCode.BadRequest);
+        }
+
+        public string TestGetMe(string test)
+        {
+            return "GET Result is " + test;
+        }
+
+        public string TestPostMe(string test)
+        {
+            return "POST Result is " + test;
         }
     }
 }
