@@ -25,9 +25,9 @@ namespace XanoSNCLibrary
         public int NotificationEventId { get; set; }
         public System.DateTime CreatedDate { get; set; }
     
+        public virtual xNotificationEvent xNotificationEvent { get; set; }
         public virtual xPublisher xPublisher { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<xSubscriptionNotification> xSubscriptionNotifications { get; set; }
-        public virtual xNotificationEvent xNotificationEvent { get; set; }
     }
 }

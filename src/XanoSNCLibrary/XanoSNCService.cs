@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Net;
 using System.Net.Http;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
-using System.Threading;
 
 namespace XanoSNCLibrary
 {
@@ -39,21 +37,38 @@ namespace XanoSNCLibrary
         /// any subscribers of changes. 
         /// </summary>
         /// <param name="request"></param>
-        public void CreateNotificationEvent(string publisher, string notificationEvent, Stream jsonSchema)
+        public string CreateNotificationEvent(string publisher, string notificationEvent, Stream jsonSchema)
         {
+            if (publisher == null)
+                ThrowWebFault("publisher is null", HttpStatusCode.BadRequest);
+            if (notificationEvent == null)
+                ThrowWebFault("notificationEvent is null", HttpStatusCode.BadRequest);
+            if (jsonSchema == null)
+                ThrowWebFault("jsonSchema is null", HttpStatusCode.BadRequest);
+
             string jsonSchemaString = string.Empty;
-            using (var reader = new StreamReader(jsonSchema))
-            {
-                jsonSchemaString = reader.ReadToEnd();
-            }
+            string token = string.Empty;
             try
             {
-                XanoSNCRepository.Instance.CreateNotificationEvent(publisher, notificationEvent, jsonSchemaString);
+                using (var reader = new StreamReader(jsonSchema))
+                {
+                    jsonSchemaString = reader.ReadToEnd();
+                }
+            }
+            catch(Exception e)
+            {
+                ThrowWebFault(e.Message, HttpStatusCode.InternalServerError);
+            }
+
+            try
+            {
+                token = XanoSNCRepository.Instance.CreateNotificationEvent(publisher, notificationEvent, jsonSchemaString);
             }
             catch(Exception e)
             {
                 ThrowWebFaultOnRepositoryException(e);
             }
+            return token;
         }
 
         /// <summary>
@@ -120,22 +135,33 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="publisher">publisher that published the notification event</param>
         /// <param name="notificationEvent">notification event being published</param>
+        /// <param name="token">Token required to verify that you are the publisher of this notification event</param>
         /// <param name="json">json object with more information about the notification event</param>
-        public void NotifySubscribers(string publisher, string notificationEvent, string json)
+        public void NotifySubscribers(string publisher, string notificationEvent, string token, string json)
         {
             if (publisher == null)
-                throw new ArgumentException("publisher must not be null");
+                ThrowWebFault("publisher is null", HttpStatusCode.BadRequest);
             if (notificationEvent == null)
-                throw new ArgumentException("notificationEvent must not be null");
+                ThrowWebFault("notificationEvent is null", HttpStatusCode.BadRequest);
+            if (token == null)
+                ThrowWebFault("token is null", HttpStatusCode.BadRequest);
             if (json == null)
-                throw new ArgumentException("json object must not be null");
+                ThrowWebFault("json is null", HttpStatusCode.BadRequest);
 
-            // Let the repository know that we are starting a notify, so that a Notification record
-            // can be created to track everything
             int notificationId = 0;
             try
             {
-                notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent);
+                // Verify that this is the publisher that created the event
+                if (XanoSNCRepository.Instance.NotificationEventHasToken(notificationEvent, token))
+                {
+                    // Let the repository know that we are starting a notify, so that a Notification record
+                    // can be created to track everything
+                    notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent);
+                }
+                else
+                {
+                    ThrowWebFault("Token " + token + " does not exist for the notificationEvent " + notificationEvent + " for publisher " + publisher, HttpStatusCode.BadRequest);
+                }
             }
             catch (Exception e)
             {
@@ -182,24 +208,38 @@ namespace XanoSNCLibrary
 
         async private void NotifySubscriber(string publisher, string notificationEvent, string subscriber, string json)
         {
-            var notifyUrl = XanoSNCRepository.Instance.GetUrlFromSubscription(notificationEvent, subscriber);
-
-            using (var httpClient = new HttpClient())
+            try
             {
-                //string json = "{ 'FirmwarePackageVersion': '5.0.1.9', 'FirmwareConfigurationVersion': '9.1.1.3.0' }";
-                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync(notifyUrl, null);
-                if (!response.IsSuccessStatusCode)
+                var notifyUrl = XanoSNCRepository.Instance.GetUrlFromSubscription(notificationEvent, subscriber);
+
+                using (var httpClient = new HttpClient())
                 {
-                    throw new Exception("Status code is " + response.StatusCode);
+                    var stringContent = new StringContent(json, Encoding.UTF8);
+
+                    // POST the json object to the Url provided by the subscriber
+                    var response = await httpClient.PostAsync(notifyUrl, null);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new Exception("Status code is " + response.StatusCode);
+                    }
                 }
             }
+            catch(Exception e)
+            {
+                ThrowWebFault(e.Message, HttpStatusCode.InternalServerError);
+            }
+        }
+
+        private void ThrowWebFault(string message, HttpStatusCode statusCode)
+        {
+            var errorData = new ErrorData("Repository error", message);
+            throw new WebFaultException<ErrorData>(errorData, statusCode);
         }
 
         private void ThrowWebFaultOnRepositoryException(Exception e)
         {
             var errorData = new ErrorData("Repository error", e.Message);
-            throw new WebFaultException<ErrorData>(errorData, System.Net.HttpStatusCode.InternalServerError);
+            throw new WebFaultException<ErrorData>(errorData, HttpStatusCode.InternalServerError);
         }
 
         public string TestGetMe(string test)
@@ -226,6 +266,19 @@ namespace XanoSNCLibrary
             {
                 jsonString = reader.ReadToEnd();
             }
+        }
+
+        public void TestNotifySubscriber(string subscriber, string notificationEvent, string subscriptionToken, string json)
+        {
+            // todo: Make sure this is the subscriber by validating the subscription token
+            if (XanoSNCRepository.Instance.SubscriptionNotificationHasToken(subscriber, notificationEvent, subscriptionToken))
+            {
+                NotifySubscriber("None", notificationEvent, subscriber, json);
+            }
+            else
+            {
+                ThrowWebFault("No subscription found with subscription token " + subscriptionToken + ", for subscriber " + subscriber + ", for notificationEvent " + notificationEvent, HttpStatusCode.BadRequest);
+            }            
         }
     }
 }

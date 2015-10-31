@@ -20,7 +20,8 @@ namespace XanoSNCLibrary
         /// <param name="publisher"></param>
         /// <param name="notificationEvent"></param>
         /// <param name="jsonSchema">json Schema for the notification message that will be sent to subscribers</param>
-        public void CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
+        /// <returns>A token that the publisher must use in subsequent calls to NotifySubscribers</returns>
+        public string CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -43,6 +44,8 @@ namespace XanoSNCLibrary
                     publisherId = xPublisher.Id;
                 }
 
+                var token = Guid.NewGuid().ToString();
+
                 var xNotificationEvent = (from ne in db.xNotificationEvents
                                   where ne.Name == notificationEvent
                                   select ne).SingleOrDefault();
@@ -53,6 +56,7 @@ namespace XanoSNCLibrary
                         Name = notificationEvent,
                         PublisherId = publisherId,
                         JsonSchema = jsonSchema,                
+                        Token = token,
                         CreatedDate = DateTime.Now
                     });
                 }
@@ -62,6 +66,8 @@ namespace XanoSNCLibrary
                 }
 
                 db.SaveChanges();
+
+                return token;
             }
         }
 
@@ -165,6 +171,17 @@ namespace XanoSNCLibrary
             }
         }
 
+        public bool NotificationEventHasToken(string notificationEvent, string token)
+        {
+            using (var db = new XanoSNCEntities())
+            {
+                var exists = ((from ne in db.xNotificationEvents
+                               where ne.Token == token
+                               select ne.Id).Count() > 0);
+                return exists;
+            }
+        }
+
         /// <summary>
         /// Gets a list of subscribers for active notifications
         /// </summary>
@@ -180,6 +197,20 @@ namespace XanoSNCLibrary
                                    where ne.Name == notification
                                    select sb.Name).ToList();
                 return subscribers;
+            }
+        }
+
+        public bool SubscriptionNotificationHasToken(string subscriber, string notificationEvent, string token)
+        {
+            using (var db = new XanoSNCEntities())
+            {
+                var exists = ((from sb in db.xSubscriptions
+                             join sc in db.xSubscribers on sb.SubscriberId equals sc.Id
+                             join ne in db.xNotificationEvents on sb.NotificationEventId equals ne.Id
+                             where sb.Token == token && sc.Name == subscriber && ne.Name == notificationEvent
+                             select sb.Id).Count() > 0);
+
+                return exists;
             }
         }
 

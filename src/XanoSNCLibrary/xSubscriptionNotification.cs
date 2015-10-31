@@ -20,7 +20,7 @@ namespace XanoSNCLibrary
         public string NotificationError { get; set; }
         public System.DateTime CreatedDate { get; set; }
     
-        public virtual xNotification xNotification { get; set; }
         public virtual xSubscription xSubscription { get; set; }
+        public virtual xNotification xNotification { get; set; }
     }
 }

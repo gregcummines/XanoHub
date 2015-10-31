@@ -54,7 +54,7 @@ namespace XanoSNCLibrary
             Method = "POST",
             UriTemplate = "createNotificationEvent/{publisher}/{notificationEvent}",
             ResponseFormat = WebMessageFormat.Json)]
-        void CreateNotificationEvent(string publisher, string notificationEvent, Stream jsonSchema);
+        string CreateNotificationEvent(string publisher, string notificationEvent, Stream jsonSchema);
 
         /// <summary>
         /// Returns a list of persisted notification events
@@ -112,14 +112,25 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="publisher">The publisher that is notifying subscribers</param>
         /// <param name="notificationEvent">The notification event being published</param>
+        /// <param name="token">A token that was given when the notification event was created.
+        /// This is required so that only the publisher that created the event can notify others</param>
         /// <param name="json">An object representing a resource that will be POSTED to the Url in the subscription</param>
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "notifySubscribers/{publisher}/{notificationEvent}",
+            UriTemplate = "notifySubscribers/{publisher}/{token}/{notificationEvent}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        void NotifySubscribers(string publisher, string notificationEvent, string json);
+        void NotifySubscribers(string publisher, string notificationEvent, string token, string json);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "notifySubscribers/{publisher}/{notificationEvent}/{subscriptionToken}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
+        void TestNotifySubscriber(string subscriber, string notificationEvent, string subscriptionToken, string json);
     }
 }
