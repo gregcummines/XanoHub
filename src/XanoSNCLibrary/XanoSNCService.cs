@@ -220,7 +220,8 @@ namespace XanoSNCLibrary
                     var response = await httpClient.PostAsync(notifyUrl, null);
                     if (!response.IsSuccessStatusCode)
                     {
-                        throw new Exception("Status code is " + response.StatusCode);
+                        var jsonResult = response.Content.ReadAsStringAsync().Result;
+                        ThrowWebFault("NotifySubscriber exception: " + jsonResult, response.StatusCode);
                     }
                 }
             }
@@ -232,7 +233,7 @@ namespace XanoSNCLibrary
 
         private void ThrowWebFault(string message, HttpStatusCode statusCode)
         {
-            var errorData = new ErrorData("Repository error", message);
+            var errorData = new ErrorData("Exception", message);
             throw new WebFaultException<ErrorData>(errorData, statusCode);
         }
 
