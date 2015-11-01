@@ -15,6 +15,11 @@ namespace XanoSNCTestSubscriberLibrary
     [ServiceContract]
     public interface IXanoSNCTestSubscriber
     {
+        /// <summary>
+        /// Method that XanoServiceNotificationCenter will call when a publisher sends out a notification 
+        /// </summary>
+        /// <param name="notificationEvent">The notification event being published</param>
+        /// <param name="json">A json object containing specifics about the notification</param>
         [OperationContract]
         [WebInvoke(
             Method = "POST",
