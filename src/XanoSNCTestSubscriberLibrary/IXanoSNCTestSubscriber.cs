@@ -9,6 +9,9 @@ using System.Text;
 
 namespace XanoSNCTestSubscriberLibrary
 {
+    /// <summary>
+    /// Web API interface to get notifications from the XanoServiceNotificationCenter
+    /// </summary>
     [ServiceContract]
     public interface IXanoSNCTestSubscriber
     {
