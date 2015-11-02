@@ -61,7 +61,9 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        [WebGet(ResponseFormat = WebMessageFormat.Json)]
+        [WebGet(
+            UriTemplate = "getNotificationEvents",
+            ResponseFormat = WebMessageFormat.Json)]
         List<string> GetNotificationEvents();
 
         /// <summary>

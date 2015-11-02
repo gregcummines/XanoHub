@@ -7,6 +7,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
+using System.Web;
 
 namespace XanoSNCLibrary
 {
@@ -215,6 +216,7 @@ namespace XanoSNCLibrary
                 using (var httpClient = new HttpClient())
                 {
                     var stringContent = new StringContent(json, Encoding.UTF8);
+                    notifyUrl = HttpUtility.UrlPathEncode(notifyUrl);
 
                     // POST the json object to the Url provided by the subscriber
                     var response = await httpClient.PostAsync(notifyUrl, null);
