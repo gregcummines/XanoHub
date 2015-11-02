@@ -26,6 +26,7 @@ namespace XanoServiceNotificationCenterTestPublisher
             //Publisher_CreateNotificationEvent();
             //GetNotificationEvents();
             Publisher_SendNotification();
+            Publisher_SendBadNotification();
         }
 
         private static void TestGetMe()
@@ -117,13 +118,38 @@ namespace XanoServiceNotificationCenterTestPublisher
                 // UriTemplate: notifySubscribers/{publisher}/{notificationEvent}/{token}
                 var url = "http://localhost:8733/XanoServiceNotificationCenter/notifySubscribers/Roka/FirmwareRelease/d54ab82f-21f2-42f3-9e43-63034f0ad52c";
                 var response = httpClient.PostAsync(url, stringContent).Result;
+                var jsonResult = response.Content.ReadAsStringAsync().Result;
+                
                 if (response.IsSuccessStatusCode)
                 {
                     Log("Success");
                 }
                 else
                 {
-                    Log("Error. The status code was " + response.StatusCode);
+                    Log("Error. The status code was " + response.StatusCode + ". " + jsonResult);
+                }
+            }
+        }
+
+        static async void Publisher_SendBadNotification()
+        {
+            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
+            {
+                string json = "{ \"FirmwarePackageVersion\": \"5.0.1.9\", \"FirmwareConfigurationVersion\": \"9.1.1.3.0\" }";
+                var stringContent = new StringContent(json, Encoding.UTF8);
+
+                // UriTemplate: notifySubscribers/{publisher}/{notificationEvent}/{token}
+                var url = "http://localhost:8733/XanoServiceNotificationCenter/notifySubscribers/Roka/FirmwareRelease/e54ab82f-21f2-42f3-9e43-63034f0ad52c";
+                var response = httpClient.PostAsync(url, stringContent).Result;
+                var jsonResult = response.Content.ReadAsStringAsync().Result;
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    Log("Success");
+                }
+                else
+                {
+                    Log("Error. The status code was " + response.StatusCode + ". " + jsonResult);
                 }
             }
         }

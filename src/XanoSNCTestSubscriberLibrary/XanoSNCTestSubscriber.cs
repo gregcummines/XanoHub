@@ -22,7 +22,7 @@ namespace XanoSNCTestSubscriberLibrary
             string jsonString = string.Empty;
             try
             {
-                using (var reader = new StreamReader(json))
+                using (var reader = new StreamReader(json, Encoding.UTF8, false, 100, true))
                 {
                     jsonString = reader.ReadToEnd();
                 }

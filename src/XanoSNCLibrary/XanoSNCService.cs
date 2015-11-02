@@ -51,7 +51,7 @@ namespace XanoSNCLibrary
             string token = string.Empty;
             try
             {
-                using (var reader = new StreamReader(jsonSchema))
+                using (var reader = new StreamReader(jsonSchema, Encoding.UTF8, false, 100, true))
                 {
                     jsonSchemaString = reader.ReadToEnd();
                 }
@@ -109,7 +109,7 @@ namespace XanoSNCLibrary
         public string Subscribe(string subscriber, string notification, string emailAddress, Stream notifyUrl)
         {
             string notifyUrlString = string.Empty;
-            using (var reader = new StreamReader(notifyUrl))
+            using (var reader = new StreamReader(notifyUrl, Encoding.UTF8, false, 100, true))
             {
                 notifyUrlString = reader.ReadToEnd();
             }
@@ -156,7 +156,7 @@ namespace XanoSNCLibrary
                 ThrowWebFault("json is null", HttpStatusCode.BadRequest);
 
             string jsonString = string.Empty;
-            using (var reader = new StreamReader(json))
+            using (var reader = new StreamReader(json, Encoding.UTF8, false, 100, true))
             {
                 jsonString = reader.ReadToEnd();
             }
@@ -171,14 +171,15 @@ namespace XanoSNCLibrary
                     // can be created to track everything
                     notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent, jsonString);
                 }
-                else
-                {
-                    ThrowWebFault("Token " + token + " does not exist for the notificationEvent " + notificationEvent + " for publisher " + publisher, HttpStatusCode.BadRequest);
-                }
             }
             catch (Exception e)
             {
                 ThrowWebFaultOnRepositoryException(e);
+            }
+
+            if (notificationId == 0)
+            {
+                ThrowWebFault("Token " + token + " does not exist for the notificationEvent " + notificationEvent + " for publisher " + publisher, HttpStatusCode.BadRequest);
             }
 
             // Find all the subscribers that want to know about this notification
@@ -283,7 +284,7 @@ namespace XanoSNCLibrary
         public void TestPostStream(string myString, Stream stream)
         {
             string jsonString = string.Empty;
-            using (var reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream, Encoding.UTF8, false, 100, true))
             {
                 jsonString = reader.ReadToEnd();
             }
