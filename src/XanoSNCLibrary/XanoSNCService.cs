@@ -197,11 +197,11 @@ namespace XanoSNCLibrary
                 var errorMessage = string.Empty;    
 
                 // Try to notify each subscriber
-                NotifySubscriber(notificationId, notificationEvent, subscriber, jsonString);
+                NotifySubscriber(notificationId, publisher, notificationEvent, subscriber, jsonString);
             }
         }
 
-        async private void NotifySubscriber(int notificationId, string notificationEvent, string subscriber, string json)
+        async private void NotifySubscriber(int notificationId, string publisher, string notificationEvent, string subscriber, string json)
         {
             try
             {
@@ -221,13 +221,12 @@ namespace XanoSNCLibrary
                     if (!response.IsSuccessStatusCode)
                     {
                         var jsonResult = response.Content.ReadAsStringAsync().Result;
-                        ThrowWebFault("NotifySubscriber exception: " + jsonResult, response.StatusCode);
                         string emailAddress = XanoSNCRepository.Instance.GetEMailFromSubscription(notificationEvent, subscriber);
                         if (IsValidEmail(emailAddress))
                         {
-                            var errorMessage = "An error occurred contacting " + subscriber + " with notification of " + notificationEvent +
-                                ". Extra Information: " + jsonResult;
-                            await MailService.Instance.SendEmailAsync(emailAddress, "Error contacting subscriber", errorMessage);
+                            var errorMessage = "<h2>Could not reach " + subscriber + ".</h2><p> " + publisher + " published a " + notificationEvent + " notification, but the XanoServiceNotificationCenter could not relay that to: " + notifyUrl +
+                                ". </p><p>Here is extra information that was sent with the message: " + json + "</p>.<p>Detailed error information: " + jsonResult + "</p>";
+                            await MailService.Instance.SendEmailAsync(emailAddress, "Error contacting " + subscriber, errorMessage);
                         }
                         XanoSNCRepository.Instance.UpdateSubscriptionNotificationWithError(subscriptionNotificationId, jsonResult);
                     }
@@ -295,7 +294,7 @@ namespace XanoSNCLibrary
             // todo: Make sure this is the subscriber by validating the subscription token
             if (XanoSNCRepository.Instance.SubscriptionNotificationHasToken(subscriber, notificationEvent, subscriptionToken))
             {
-                NotifySubscriber(0, "None", subscriber, json);
+                NotifySubscriber(0, "TestPublisher", "testNotificationEvent", subscriber, json);
             }
             else
             {
