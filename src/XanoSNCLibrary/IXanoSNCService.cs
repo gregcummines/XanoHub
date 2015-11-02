@@ -93,7 +93,7 @@ namespace XanoSNCLibrary
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        string Subscribe(string subscriber, string notificationEvent, string notifyUrl);
+        string Subscribe(string subscriber, string notificationEvent, Stream notifyUrl);
 
         /// <summary>
         /// Allows a subscriber to unsubscribe from a notification event. 

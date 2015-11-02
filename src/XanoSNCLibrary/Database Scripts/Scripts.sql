@@ -1,6 +1,6 @@
 ﻿USE [XanoServiceNotificationCenter]
 GO
-/****** Object:  Table [dbo].[xNotification]    Script Date: 10/31/2015 2:57:17 PM ******/
+/****** Object:  Table [dbo].[xNotification]    Script Date: 11/2/2015 6:48:30 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17,7 +17,7 @@ CREATE TABLE [dbo].[xNotification](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xNotificationEvent]    Script Date: 10/31/2015 2:57:17 PM ******/
+/****** Object:  Table [dbo].[xNotificationEvent]    Script Date: 11/2/2015 6:48:30 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -36,7 +36,7 @@ CREATE TABLE [dbo].[xNotificationEvent](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xPublisher]    Script Date: 10/31/2015 2:57:17 PM ******/
+/****** Object:  Table [dbo].[xPublisher]    Script Date: 11/2/2015 6:48:30 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,7 +52,7 @@ CREATE TABLE [dbo].[xPublisher](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscriber]    Script Date: 10/31/2015 2:57:17 PM ******/
+/****** Object:  Table [dbo].[xSubscriber]    Script Date: 11/2/2015 6:48:30 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -68,14 +68,13 @@ CREATE TABLE [dbo].[xSubscriber](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscription]    Script Date: 10/31/2015 2:57:17 PM ******/
+/****** Object:  Table [dbo].[xSubscription]    Script Date: 11/2/2015 6:48:30 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[xSubscription](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [nvarchar](50) NOT NULL,
 	[SubscriberId] [int] NOT NULL,
 	[NotificationEventId] [int] NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
@@ -88,7 +87,7 @@ CREATE TABLE [dbo].[xSubscription](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscriptionNotifications]    Script Date: 10/31/2015 2:57:17 PM ******/
+/****** Object:  Table [dbo].[xSubscriptionNotifications]    Script Date: 11/2/2015 6:48:30 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

@@ -21,7 +21,6 @@ namespace XanoSNCLibrary
         }
     
         public int Id { get; set; }
-        public string Name { get; set; }
         public int SubscriberId { get; set; }
         public int NotificationEventId { get; set; }
         public System.DateTime CreatedDate { get; set; }

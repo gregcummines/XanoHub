@@ -268,8 +268,8 @@ namespace XanoSNCLibrary
                 {
                     db.xSubscriptions.Add(new xSubscription()
                     {
-                        NotificationEventId = xSubscriptionDB.NotificationEventId,
-                        SubscriberId = xSubscriptionDB.SubscriberId,
+                        NotificationEventId = xNotificationEvent.Id,
+                        SubscriberId = subscriberId,
                         NotifyURL = notifyUrl,
                         Token = token,
                         CreatedDate = DateTime.Now

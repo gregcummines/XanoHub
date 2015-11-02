@@ -106,11 +106,17 @@ namespace XanoSNCLibrary
             return new MemoryStream(Encoding.UTF8.GetBytes(jsonSchemaString));
         }
 
-        public string Subscribe(string subscriber, string notification, string notifyUrl)
+        public string Subscribe(string subscriber, string notification, Stream notifyUrl)
         {
+            string notifyUrlString = string.Empty;
+            using (var reader = new StreamReader(notifyUrl))
+            {
+                notifyUrlString = reader.ReadToEnd();
+            }
+
             try
             {
-                return XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrl);
+                return XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrlString);
             }
             catch (Exception e)
             {
