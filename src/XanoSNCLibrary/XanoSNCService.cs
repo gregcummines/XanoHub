@@ -106,7 +106,7 @@ namespace XanoSNCLibrary
             return new MemoryStream(Encoding.UTF8.GetBytes(jsonSchemaString));
         }
 
-        public string Subscribe(string subscriber, string notification, Stream notifyUrl)
+        public string Subscribe(string subscriber, string notification, string emailAddress, Stream notifyUrl)
         {
             string notifyUrlString = string.Empty;
             using (var reader = new StreamReader(notifyUrl))
@@ -116,7 +116,7 @@ namespace XanoSNCLibrary
 
             try
             {
-                return XanoSNCRepository.Instance.Subscribe(subscriber, notification, notifyUrlString);
+                return XanoSNCRepository.Instance.Subscribe(subscriber, notification, emailAddress, notifyUrlString);
             }
             catch (Exception e)
             {
@@ -222,7 +222,13 @@ namespace XanoSNCLibrary
                     {
                         var jsonResult = response.Content.ReadAsStringAsync().Result;
                         ThrowWebFault("NotifySubscriber exception: " + jsonResult, response.StatusCode);
-
+                        string emailAddress = XanoSNCRepository.Instance.GetEMailFromSubscription(notificationEvent, subscriber);
+                        if (IsValidEmail(emailAddress))
+                        {
+                            var errorMessage = "An error occurred contacting " + subscriber + " with notification of " + notificationEvent +
+                                ". Extra Information: " + jsonResult;
+                            await MailService.Instance.SendEmailAsync(emailAddress, "Error contacting subscriber", errorMessage);
+                        }
                         XanoSNCRepository.Instance.UpdateSubscriptionNotificationWithError(subscriptionNotificationId, jsonResult);
                     }
                 }
@@ -230,6 +236,19 @@ namespace XanoSNCLibrary
             catch(Exception e)
             {
                 ThrowWebFault(e.Message, HttpStatusCode.InternalServerError);
+            }
+        }
+
+        bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
             }
         }
 

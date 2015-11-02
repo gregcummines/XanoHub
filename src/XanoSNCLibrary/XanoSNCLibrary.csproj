@@ -57,6 +57,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
@@ -71,6 +72,7 @@
   <ItemGroup>
     <Compile Include="ErrorData.cs" />
     <Compile Include="IXanoSNCService.cs" />
+    <Compile Include="MailService.cs" />
     <Compile Include="Publisher.cs" />
     <Compile Include="XanoSNCModel.Context.cs">
       <AutoGen>True</AutoGen>

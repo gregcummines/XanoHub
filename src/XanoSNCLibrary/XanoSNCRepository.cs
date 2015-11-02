@@ -9,10 +9,12 @@ namespace XanoSNCLibrary
     /// </summary>
     internal class XanoSNCRepository
     {
+        #region Singleton
         private static XanoSNCRepository instance = new XanoSNCRepository();
         private XanoSNCRepository() { }
 
         internal static XanoSNCRepository Instance { get { return instance; } }
+        #endregion
 
         /// <summary>
         /// Stores a new notification type in the database
@@ -221,7 +223,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent"></param>
         /// <param name="notifyUrl"></param>
         /// <returns>A token that must be used when unsubscribing</returns>
-        internal string Subscribe(string subscriber, string notificationEvent, string notifyUrl)
+        internal string Subscribe(string subscriber, string notificationEvent, string emailAddress, string notifyUrl)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -272,6 +274,7 @@ namespace XanoSNCLibrary
                         SubscriberId = subscriberId,
                         NotifyURL = notifyUrl,
                         Token = token,
+                        EmailAddress = emailAddress,
                         CreatedDate = DateTime.Now
                     });
                 }
@@ -283,6 +286,19 @@ namespace XanoSNCLibrary
                 db.SaveChanges();
 
                 return token;
+            }
+        }
+
+        internal string GetEMailFromSubscription(string notificationEvent, string subscriber)
+        {
+            using (var db = new XanoSNCEntities())
+            {
+                var email = (from sc in db.xSubscriptions
+                             join sb in db.xSubscribers on sc.SubscriberId equals sb.Id
+                             join ne in db.xNotificationEvents on sc.NotificationEventId equals ne.Id
+                             where sb.Name == subscriber && ne.Name == notificationEvent
+                             select sc.EmailAddress).SingleOrDefault();
+                return email;
             }
         }
 

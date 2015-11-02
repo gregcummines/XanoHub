@@ -79,6 +79,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="subscriber">Subscriber requesting to subscribe</param>
         /// <param name="notificationEvent">Notification event requesting to be subscribed to</param>
+        /// <param name="emailAddress">Email address to send a notification to in case the service cannot be contacted</param>
         /// <param name="notifyUrl">
         /// A RESTful API Url to be called when a notification is sent by a publisher
         /// This Url will have POST called on it, since a notification is being posted.
@@ -89,11 +90,11 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "subscribe/{subscriber}/{notificationEvent}",
+            UriTemplate = "subscribe/{subscriber}/{notificationEvent}/{emailAddress}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        string Subscribe(string subscriber, string notificationEvent, Stream notifyUrl);
+        string Subscribe(string subscriber, string notificationEvent, string emailAddress, Stream notifyUrl);
 
         /// <summary>
         /// Allows a subscriber to unsubscribe from a notification event. 

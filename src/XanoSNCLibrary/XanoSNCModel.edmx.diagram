@@ -10,14 +10,14 @@
         <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xSubscriptionNotification" Width="2.375" PointX="7.5" PointY="6.25" IsExpanded="true" />
         <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xNotificationEvent" Width="1.5" PointX="3" PointY="2.75" />
         <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_NotificationEvent_Publisher" />
-        <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xSubscription" Width="1.5" PointX="5.25" PointY="6.5" />
-        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Subscription_NotificationEvent" />
-        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Subscription_Subscriber" />
-        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Subscription" />
         <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xNotification" Width="1.5" PointX="5.25" PointY="2.875" />
         <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent" />
         <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Notification_Publisher" />
         <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Notification" />
+        <EntityTypeShape EntityType="XanoServiceNotificationCenterModel.xSubscription" Width="1.5" PointX="5.25" PointY="6.375" />
+        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Subscription_NotificationEvent" />
+        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_Subscription_Subscriber" />
+        <AssociationConnector Association="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Subscription" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

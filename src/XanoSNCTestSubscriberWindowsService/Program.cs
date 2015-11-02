@@ -34,8 +34,8 @@ namespace XanoSNCTestSubscriberWindowsService
             //    var jsonResult = result.Content.ReadAsStringAsync().Result;
             //    dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
 
-            //    // UriTemplate: subscribe/{subscriber}/{notificationEvent}
-            //    url = "http://localhost:8733/XanoServiceNotificationCenter/subscribe/testSubscriber/FirmwareRelease";
+            //    // UriTemplate: subscribe/{subscriber}/{notificationEvent}/{emailAddress}
+            //    url = "http://localhost:8733/XanoServiceNotificationCenter/subscribe/testSubscriber/FirmwareRelease/greg_cummines@starkey.com";
 
             //    string json = "http://localhost:8733/XanoTestSubscriber/notify/FirmwareRelease";
             //    var stringContent = new StringContent(json, Encoding.UTF8);
