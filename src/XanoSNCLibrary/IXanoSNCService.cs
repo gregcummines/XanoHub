@@ -120,7 +120,7 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "notifySubscribers/{publisher}/{token}/{notificationEvent}",
+            UriTemplate = "notifySubscribers/{publisher}/{notificationEvent}/{token}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
@@ -129,7 +129,7 @@ namespace XanoSNCLibrary
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "notifySubscribers/{publisher}/{notificationEvent}/{subscriptionToken}",
+            UriTemplate = "testNotifySubscribers/{subscriber}/{notificationEvent}/{subscriptionToken}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]

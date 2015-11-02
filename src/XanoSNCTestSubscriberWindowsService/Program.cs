@@ -34,7 +34,17 @@ namespace XanoSNCTestSubscriberWindowsService
                 var jsonResult = result.Content.ReadAsStringAsync().Result;
                 dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
 
-                
+                // UriTemplate: subscribe/{subscriber}/{notificationEvent}
+                url = "http://localhost:8733/XanoServiceNotificationCenter/subscribe/testSubscriber/FirmwareRelease";
+
+                string json = "\"This is a test\"";
+                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+                httpResponseMessage = httpClient.PostAsync(url, stringContent);
+                result = httpResponseMessage.Result;
+                jsonResult = result.Content.ReadAsStringAsync().Result;
+                // The result is a token that will be need to be used if we want to unsubscribe. 
+                // This will prevent others from unsubscribing to notification events that we subscribed to.
+                jsonResponse = JsonConvert.DeserializeObject(jsonResult);
             }
 
 
