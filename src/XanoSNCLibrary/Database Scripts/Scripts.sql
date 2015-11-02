@@ -1,6 +1,6 @@
 ﻿USE [XanoServiceNotificationCenter]
 GO
-/****** Object:  Table [dbo].[xNotification]    Script Date: 11/2/2015 6:48:30 AM ******/
+/****** Object:  Table [dbo].[xNotification]    Script Date: 11/2/2015 6:58:48 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[xNotification](
 	[PublisherId] [int] NOT NULL,
 	[NotificationEventId] [int] NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
+	[Message] [nvarchar](500) NOT NULL,
  CONSTRAINT [PK_Notification] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -17,7 +18,7 @@ CREATE TABLE [dbo].[xNotification](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xNotificationEvent]    Script Date: 11/2/2015 6:48:30 AM ******/
+/****** Object:  Table [dbo].[xNotificationEvent]    Script Date: 11/2/2015 6:58:48 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -36,7 +37,7 @@ CREATE TABLE [dbo].[xNotificationEvent](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xPublisher]    Script Date: 11/2/2015 6:48:30 AM ******/
+/****** Object:  Table [dbo].[xPublisher]    Script Date: 11/2/2015 6:58:48 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,7 +53,7 @@ CREATE TABLE [dbo].[xPublisher](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscriber]    Script Date: 11/2/2015 6:48:30 AM ******/
+/****** Object:  Table [dbo].[xSubscriber]    Script Date: 11/2/2015 6:58:48 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -68,7 +69,7 @@ CREATE TABLE [dbo].[xSubscriber](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscription]    Script Date: 11/2/2015 6:48:30 AM ******/
+/****** Object:  Table [dbo].[xSubscription]    Script Date: 11/2/2015 6:58:48 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -87,7 +88,7 @@ CREATE TABLE [dbo].[xSubscription](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[xSubscriptionNotifications]    Script Date: 11/2/2015 6:48:30 AM ******/
+/****** Object:  Table [dbo].[xSubscriptionNotifications]    Script Date: 11/2/2015 6:58:48 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

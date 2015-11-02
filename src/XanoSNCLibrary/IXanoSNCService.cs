@@ -124,7 +124,7 @@ namespace XanoSNCLibrary
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        void NotifySubscribers(string publisher, string notificationEvent, string token, string json);
+        void NotifySubscribers(string publisher, string notificationEvent, string token, Stream json);
 
         [OperationContract]
         [WebInvoke(

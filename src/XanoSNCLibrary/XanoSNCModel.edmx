@@ -13,6 +13,7 @@
           <Property Name="PublisherId" Type="int" Nullable="false" />
           <Property Name="NotificationEventId" Type="int" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="Message" Type="nvarchar" MaxLength="500" Nullable="false" />
         </EntityType>
         <EntityType Name="xNotificationEvent">
           <Key>
@@ -214,8 +215,8 @@
           <Property Name="NotificationId" Type="Int32" Nullable="false" />
           <Property Name="NotificationError" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="xNotification" Relationship="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Notification" FromRole="xSubscriptionNotification" ToRole="xNotification" />
           <NavigationProperty Name="xSubscription" Relationship="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Subscription" FromRole="xSubscriptionNotification" ToRole="xSubscription" />
+          <NavigationProperty Name="xNotification" Relationship="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Notification" FromRole="xSubscriptionNotification" ToRole="xNotification" />
         </EntityType>
         <EntityContainer Name="XanoSNCEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="xPublishers" EntityType="Self.xPublisher" />
@@ -225,19 +226,6 @@
           <AssociationSet Name="FK_NotificationEvent_Publisher" Association="XanoServiceNotificationCenterModel.FK_NotificationEvent_Publisher">
             <End Role="xPublisher" EntitySet="xPublishers" />
             <End Role="xNotificationEvent" EntitySet="xNotificationEvents" />
-          </AssociationSet>
-          <EntitySet Name="xNotifications" EntityType="XanoServiceNotificationCenterModel.xNotification" />
-          <AssociationSet Name="FK_Notification_NotificationEvent" Association="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent">
-            <End Role="xNotificationEvent" EntitySet="xNotificationEvents" />
-            <End Role="xNotification" EntitySet="xNotifications" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Notification_Publisher" Association="XanoServiceNotificationCenterModel.FK_Notification_Publisher">
-            <End Role="xPublisher" EntitySet="xPublishers" />
-            <End Role="xNotification" EntitySet="xNotifications" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SubscriptionNotifications_Notification" Association="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Notification">
-            <End Role="xNotification" EntitySet="xNotifications" />
-            <End Role="xSubscriptionNotification" EntitySet="xSubscriptionNotifications" />
           </AssociationSet>
           <EntitySet Name="xSubscriptions" EntityType="XanoServiceNotificationCenterModel.xSubscription" />
           <AssociationSet Name="FK_Subscription_NotificationEvent" Association="XanoServiceNotificationCenterModel.FK_Subscription_NotificationEvent">
@@ -252,6 +240,19 @@
             <End Role="xSubscription" EntitySet="xSubscriptions" />
             <End Role="xSubscriptionNotification" EntitySet="xSubscriptionNotifications" />
           </AssociationSet>
+          <EntitySet Name="xNotifications" EntityType="XanoServiceNotificationCenterModel.xNotification" />
+          <AssociationSet Name="FK_Notification_NotificationEvent" Association="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent">
+            <End Role="xNotificationEvent" EntitySet="xNotificationEvents" />
+            <End Role="xNotification" EntitySet="xNotifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notification_Publisher" Association="XanoServiceNotificationCenterModel.FK_Notification_Publisher">
+            <End Role="xPublisher" EntitySet="xPublishers" />
+            <End Role="xNotification" EntitySet="xNotifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SubscriptionNotifications_Notification" Association="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Notification">
+            <End Role="xNotification" EntitySet="xNotifications" />
+            <End Role="xSubscriptionNotification" EntitySet="xSubscriptionNotifications" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="xNotificationEvent">
           <Key>
@@ -264,8 +265,8 @@
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="xPublisher" Relationship="XanoServiceNotificationCenterModel.FK_NotificationEvent_Publisher" FromRole="xNotificationEvent" ToRole="xPublisher" />
           <Property Name="Token" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="xNotifications" Relationship="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent" FromRole="xNotificationEvent" ToRole="xNotification" />
           <NavigationProperty Name="xSubscriptions" Relationship="XanoServiceNotificationCenterModel.FK_Subscription_NotificationEvent" FromRole="xNotificationEvent" ToRole="xSubscription" />
+          <NavigationProperty Name="xNotifications" Relationship="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent" FromRole="xNotificationEvent" ToRole="xNotification" />
         </EntityType>
         <Association Name="FK_NotificationEvent_Publisher">
           <End Type="XanoServiceNotificationCenterModel.xPublisher" Role="xPublisher" Multiplicity="1" />
@@ -276,54 +277,6 @@
             </Principal>
             <Dependent Role="xNotificationEvent">
               <PropertyRef Name="PublisherId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="xNotification">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PublisherId" Type="Int32" Nullable="false" />
-          <Property Name="NotificationEventId" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="xNotificationEvent" Relationship="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent" FromRole="xNotification" ToRole="xNotificationEvent" />
-          <NavigationProperty Name="xPublisher" Relationship="XanoServiceNotificationCenterModel.FK_Notification_Publisher" FromRole="xNotification" ToRole="xPublisher" />
-          <NavigationProperty Name="xSubscriptionNotifications" Relationship="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Notification" FromRole="xNotification" ToRole="xSubscriptionNotification" />
-        </EntityType>
-        <Association Name="FK_Notification_NotificationEvent">
-          <End Type="XanoServiceNotificationCenterModel.xNotificationEvent" Role="xNotificationEvent" Multiplicity="1" />
-          <End Type="XanoServiceNotificationCenterModel.xNotification" Role="xNotification" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="xNotificationEvent">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="xNotification">
-              <PropertyRef Name="NotificationEventId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Notification_Publisher">
-          <End Type="XanoServiceNotificationCenterModel.xPublisher" Role="xPublisher" Multiplicity="1" />
-          <End Type="XanoServiceNotificationCenterModel.xNotification" Role="xNotification" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="xPublisher">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="xNotification">
-              <PropertyRef Name="PublisherId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SubscriptionNotifications_Notification">
-          <End Type="XanoServiceNotificationCenterModel.xNotification" Role="xNotification" Multiplicity="1" />
-          <End Type="XanoServiceNotificationCenterModel.xSubscriptionNotification" Role="xSubscriptionNotification" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="xNotification">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="xSubscriptionNotification">
-              <PropertyRef Name="NotificationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -377,6 +330,55 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="xNotification">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PublisherId" Type="Int32" Nullable="false" />
+          <Property Name="NotificationEventId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Message" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="xNotificationEvent" Relationship="XanoServiceNotificationCenterModel.FK_Notification_NotificationEvent" FromRole="xNotification" ToRole="xNotificationEvent" />
+          <NavigationProperty Name="xPublisher" Relationship="XanoServiceNotificationCenterModel.FK_Notification_Publisher" FromRole="xNotification" ToRole="xPublisher" />
+          <NavigationProperty Name="xSubscriptionNotifications" Relationship="XanoServiceNotificationCenterModel.FK_SubscriptionNotifications_Notification" FromRole="xNotification" ToRole="xSubscriptionNotification" />
+        </EntityType>
+        <Association Name="FK_Notification_NotificationEvent">
+          <End Type="XanoServiceNotificationCenterModel.xNotificationEvent" Role="xNotificationEvent" Multiplicity="1" />
+          <End Type="XanoServiceNotificationCenterModel.xNotification" Role="xNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="xNotificationEvent">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="xNotification">
+              <PropertyRef Name="NotificationEventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notification_Publisher">
+          <End Type="XanoServiceNotificationCenterModel.xPublisher" Role="xPublisher" Multiplicity="1" />
+          <End Type="XanoServiceNotificationCenterModel.xNotification" Role="xNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="xPublisher">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="xNotification">
+              <PropertyRef Name="PublisherId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SubscriptionNotifications_Notification">
+          <End Type="XanoServiceNotificationCenterModel.xNotification" Role="xNotification" Multiplicity="1" />
+          <End Type="XanoServiceNotificationCenterModel.xSubscriptionNotification" Role="xSubscriptionNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="xNotification">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="xSubscriptionNotification">
+              <PropertyRef Name="NotificationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -424,16 +426,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="xNotifications">
-            <EntityTypeMapping TypeName="XanoServiceNotificationCenterModel.xNotification">
-              <MappingFragment StoreEntitySet="xNotification">
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="NotificationEventId" ColumnName="NotificationEventId" />
-                <ScalarProperty Name="PublisherId" ColumnName="PublisherId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="xSubscriptions">
             <EntityTypeMapping TypeName="XanoServiceNotificationCenterModel.xSubscription">
               <MappingFragment StoreEntitySet="xSubscription">
@@ -442,6 +434,17 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="NotificationEventId" ColumnName="NotificationEventId" />
                 <ScalarProperty Name="SubscriberId" ColumnName="SubscriberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="xNotifications">
+            <EntityTypeMapping TypeName="XanoServiceNotificationCenterModel.xNotification">
+              <MappingFragment StoreEntitySet="xNotification">
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="NotificationEventId" ColumnName="NotificationEventId" />
+                <ScalarProperty Name="PublisherId" ColumnName="PublisherId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

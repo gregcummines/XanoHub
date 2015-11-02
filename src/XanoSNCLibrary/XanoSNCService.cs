@@ -144,7 +144,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent">notification event being published</param>
         /// <param name="token">Token required to verify that you are the publisher of this notification event</param>
         /// <param name="json">json object with more information about the notification event</param>
-        public void NotifySubscribers(string publisher, string notificationEvent, string token, string json)
+        public void NotifySubscribers(string publisher, string notificationEvent, string token, Stream json)
         {
             if (publisher == null)
                 ThrowWebFault("publisher is null", HttpStatusCode.BadRequest);
@@ -155,6 +155,12 @@ namespace XanoSNCLibrary
             if (json == null)
                 ThrowWebFault("json is null", HttpStatusCode.BadRequest);
 
+            string jsonString = string.Empty;
+            using (var reader = new StreamReader(json))
+            {
+                jsonString = reader.ReadToEnd();
+            }
+
             int notificationId = 0;
             try
             {
@@ -163,7 +169,7 @@ namespace XanoSNCLibrary
                 {
                     // Let the repository know that we are starting a notify, so that a Notification record
                     // can be created to track everything
-                    notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent);
+                    notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent, jsonString);
                 }
                 else
                 {
@@ -190,46 +196,34 @@ namespace XanoSNCLibrary
             {
                 var errorMessage = string.Empty;    
 
-                try
-                {
-                    // Try to notify each subscriber
-                    NotifySubscriber(publisher, notificationEvent, subscriber, json);
-                }
-                catch(Exception e)
-                {
-                    // catch the exception. We are going to create a subscription notification record below
-                    // and we need to log the fact that we ran into problems. 
-                    errorMessage = e.Message;
-                }
-
-                try
-                {
-                    XanoSNCRepository.Instance.CreateSubscriptionNotification(notificationId, subscriber, errorMessage);
-                }
-                catch (Exception e)
-                {
-                    ThrowWebFaultOnRepositoryException(e);
-                }
+                // Try to notify each subscriber
+                NotifySubscriber(notificationId, notificationEvent, subscriber, jsonString);
             }
         }
 
-        async private void NotifySubscriber(string publisher, string notificationEvent, string subscriber, string json)
+        async private void NotifySubscriber(int notificationId, string notificationEvent, string subscriber, string json)
         {
             try
             {
                 var notifyUrl = XanoSNCRepository.Instance.GetUrlFromSubscription(notificationEvent, subscriber);
 
-                using (var httpClient = new HttpClient())
+                // Start a subscription notification record. We'll update it when we after we attempt to 
+                // reach the subscriber
+                var subscriptionNotificationId = XanoSNCRepository.Instance.CreateSubscriptionNotification(notificationId, subscriber); 
+
+                using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
                 {
                     var stringContent = new StringContent(json, Encoding.UTF8);
                     notifyUrl = HttpUtility.UrlPathEncode(notifyUrl);
 
                     // POST the json object to the Url provided by the subscriber
-                    var response = await httpClient.PostAsync(notifyUrl, null);
+                    var response = await httpClient.PostAsync(notifyUrl, stringContent);
                     if (!response.IsSuccessStatusCode)
                     {
                         var jsonResult = response.Content.ReadAsStringAsync().Result;
                         ThrowWebFault("NotifySubscriber exception: " + jsonResult, response.StatusCode);
+
+                        XanoSNCRepository.Instance.UpdateSubscriptionNotificationWithError(subscriptionNotificationId, jsonResult);
                     }
                 }
             }
@@ -282,7 +276,7 @@ namespace XanoSNCLibrary
             // todo: Make sure this is the subscriber by validating the subscription token
             if (XanoSNCRepository.Instance.SubscriptionNotificationHasToken(subscriber, notificationEvent, subscriptionToken))
             {
-                NotifySubscriber("None", notificationEvent, subscriber, json);
+                NotifySubscriber(0, "None", subscriber, json);
             }
             else
             {

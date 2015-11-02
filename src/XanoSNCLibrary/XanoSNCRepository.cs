@@ -12,7 +12,7 @@ namespace XanoSNCLibrary
         private static XanoSNCRepository instance = new XanoSNCRepository();
         private XanoSNCRepository() { }
 
-        public static XanoSNCRepository Instance { get { return instance; } }
+        internal static XanoSNCRepository Instance { get { return instance; } }
 
         /// <summary>
         /// Stores a new notification type in the database
@@ -21,7 +21,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent"></param>
         /// <param name="jsonSchema">json Schema for the notification message that will be sent to subscribers</param>
         /// <returns>A token that the publisher must use in subsequent calls to NotifySubscribers</returns>
-        public string CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
+        internal string CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -75,7 +75,7 @@ namespace XanoSNCLibrary
         /// Gets a list of all notification types from the database
         /// </summary>
         /// <returns></returns>
-        public List<string> GetNotificationEvents()
+        internal List<string> GetNotificationEvents()
         {
             using (var db = new XanoSNCEntities())
             {
@@ -89,7 +89,7 @@ namespace XanoSNCLibrary
         /// Gets a list of all active subscribers
         /// </summary>
         /// <returns></returns>
-        public List<Subscriber> GetSubscribers()
+        internal List<Subscriber> GetSubscribers()
         {
             using (var db = new XanoSNCEntities())
             {
@@ -101,7 +101,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        public string GetNotificationEventMessageSchema(string notificationEvent)
+        internal string GetNotificationEventMessageSchema(string notificationEvent)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -118,7 +118,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <returns></returns>
-        public List<NotificationEvent> GetNotificationsForSubscriber(Subscriber subscriber)
+        internal List<NotificationEvent> GetNotificationsForSubscriber(Subscriber subscriber)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -171,7 +171,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        public bool NotificationEventHasToken(string notificationEvent, string token)
+        internal bool NotificationEventHasToken(string notificationEvent, string token)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -187,7 +187,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="notification"></param>
         /// <returns></returns>
-        public List<string> GetSubscribersForNotification(string notification)
+        internal List<string> GetSubscribersForNotification(string notification)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -200,7 +200,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        public bool SubscriptionNotificationHasToken(string subscriber, string notificationEvent, string token)
+        internal bool SubscriptionNotificationHasToken(string subscriber, string notificationEvent, string token)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -221,7 +221,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent"></param>
         /// <param name="notifyUrl"></param>
         /// <returns>A token that must be used when unsubscribing</returns>
-        public string Subscribe(string subscriber, string notificationEvent, string notifyUrl)
+        internal string Subscribe(string subscriber, string notificationEvent, string notifyUrl)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -286,13 +286,52 @@ namespace XanoSNCLibrary
             }
         }
 
+        internal void UpdateSubscriptionNotificationWithError(int subscriptionNotificationId, string errorMessage)
+        {
+            using (var db = new XanoSNCEntities())
+            {
+                var xSubscriptionNotification = (from s in db.xSubscriptionNotifications
+                                                 where s.Id == subscriptionNotificationId
+                                                 select s).Single();
+                xSubscriptionNotification.NotificationError = errorMessage;
+                db.SaveChanges();
+            }
+        }
+
+        internal int CreateSubscriptionNotification(int notificationId, string subscriber)
+        {
+            using (var db = new XanoSNCEntities())
+            {
+                var xSubscriber = (from s in db.xSubscribers
+                                   where s.Name == subscriber
+                                   select s).SingleOrDefault();
+                if (xSubscriber == null)
+                {
+                    throw new Exception("Subscriber with name: " + subscriber + " does not exist.");
+                }
+
+                var subscriptionNotification = new xSubscriptionNotification()
+                {
+                    NotificationId = notificationId,
+                    SubscriptionId = xSubscriber.Id,
+                    CreatedDate = DateTime.Now
+                };
+
+                db.xSubscriptionNotifications.Add(subscriptionNotification);
+
+                db.SaveChanges();
+
+                return subscriptionNotification.Id;
+            }            
+        }
+
         /// <summary>
         /// Removes a service subscription to a notification in the database
         /// </summary>
         /// <param name="subscriber"></param>
         /// <param name="notificationEvent"></param>
         /// <param name="token">A token issued by the subscribe method</param>
-        public void Unsubscribe(string subscriber, string notificationEvent, string token)
+        internal void Unsubscribe(string subscriber, string notificationEvent, string token)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -345,7 +384,7 @@ namespace XanoSNCLibrary
         /// Tracks an outgoing SNC notification attempt to subscribers in the database
         /// </summary>
         /// <param name="notificationEvent"></param>
-        public int CreateNotification(string publisher, string notificationEvent)
+        internal int CreateNotification(string publisher, string notificationEvent, string message)
         {
             // Insert a notification record
             using (var db = new XanoSNCEntities())
@@ -357,10 +396,18 @@ namespace XanoSNCLibrary
                 if (notificationEventDB == null)
                     throw new Exception("Notification by name: " + notificationEvent + " does not exist");
 
+                var publisherDB = (from p in db.xPublishers
+                                           where p.Name == publisher
+                                           select p).SingleOrDefault();
+                if (publisherDB == null)
+                    throw new Exception("Publisher by name: " + publisher + " does not exist");
+
                 var notification = new xNotification()
                 {
                     NotificationEventId = notificationEventDB.Id,
-                    CreatedDate = DateTime.Now
+                    PublisherId = publisherDB.Id,
+                    Message = message,
+                    CreatedDate = DateTime.Now,
                 };
 
                 db.xNotifications.Add(notification);
@@ -377,7 +424,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationId">Id of the notification record</param>
         /// <param name="subscriber">Subscriber we attempted to contact</param>
         /// <param name="errorMessage">If an error occurred, this will be a non-null string with the message</param>
-        public void CreateSubscriptionNotification(int notificationId, string subscriber, string errorMessage)
+        internal void CreateSubscriptionNotification(int notificationId, string subscriber, string errorMessage)
         {
             // Find the subscription id by subscriber name and notification event name
             // We need it to create a list of records for each subscriber that we attemped to contact

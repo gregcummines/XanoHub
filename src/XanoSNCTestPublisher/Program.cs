@@ -20,12 +20,12 @@ namespace XanoServiceNotificationCenterTestPublisher
     {
         static void Main()
         {
-            TestGetMe();
-            TestPostMe();
-            TestPostSteam();
-            Publisher_CreateNotificationEvent();
-            GetNotificationEvents();
-            //Publisher_SendNotification();
+            //TestGetMe();
+            //TestPostMe();
+            //TestPostSteam();
+            //Publisher_CreateNotificationEvent();
+            //GetNotificationEvents();
+            Publisher_SendNotification();
         }
 
         private static void TestGetMe()
@@ -112,9 +112,10 @@ namespace XanoServiceNotificationCenterTestPublisher
             using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
             {
                 string json = "{ \"FirmwarePackageVersion\": \"5.0.1.9\", \"FirmwareConfigurationVersion\": \"9.1.1.3.0\" }";
-                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+                var stringContent = new StringContent(json, Encoding.UTF8);
 
-                var url = "http://localhost:8733/XanoServiceNotificationCenter/notifySubscribers/Roka/FirmwareRelease";
+                // UriTemplate: notifySubscribers/{publisher}/{notificationEvent}/{token}
+                var url = "http://localhost:8733/XanoServiceNotificationCenter/notifySubscribers/Roka/FirmwareRelease/d54ab82f-21f2-42f3-9e43-63034f0ad52c";
                 var response = httpClient.PostAsync(url, stringContent).Result;
                 if (response.IsSuccessStatusCode)
                 {

@@ -17,8 +17,8 @@ namespace XanoSNCLibrary
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public xNotificationEvent()
         {
-            this.xNotifications = new HashSet<xNotification>();
             this.xSubscriptions = new HashSet<xSubscription>();
+            this.xNotifications = new HashSet<xNotification>();
         }
     
         public int Id { get; set; }
@@ -30,8 +30,8 @@ namespace XanoSNCLibrary
     
         public virtual xPublisher xPublisher { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<xNotification> xNotifications { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<xSubscription> xSubscriptions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<xNotification> xNotifications { get; set; }
     }
 }

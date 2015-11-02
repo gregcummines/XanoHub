@@ -24,6 +24,7 @@ namespace XanoSNCLibrary
         public int PublisherId { get; set; }
         public int NotificationEventId { get; set; }
         public System.DateTime CreatedDate { get; set; }
+        public string Message { get; set; }
     
         public virtual xNotificationEvent xNotificationEvent { get; set; }
         public virtual xPublisher xPublisher { get; set; }
