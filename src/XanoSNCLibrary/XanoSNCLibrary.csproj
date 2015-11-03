@@ -70,7 +70,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomServiceHost.cs" />
+    <Compile Include="DependencyResolverInstanceProvider.cs" />
+    <Compile Include="DependencyResolverServiceBehavior.cs" />
     <Compile Include="ErrorData.cs" />
+    <Compile Include="IXanoSNCRepository.cs" />
     <Compile Include="IXanoSNCService.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="Publisher.cs" />

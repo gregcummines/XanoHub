@@ -7,15 +7,8 @@ namespace XanoSNCLibrary
     /// <summary>
     /// Interface used to manage the Xano SNC persistent data
     /// </summary>
-    internal class XanoSNCRepository
+    public class XanoSNCRepository : IXanoSNCRepository
     {
-        #region Singleton
-        private static XanoSNCRepository instance = new XanoSNCRepository();
-        private XanoSNCRepository() { }
-
-        internal static XanoSNCRepository Instance { get { return instance; } }
-        #endregion
-
         /// <summary>
         /// Stores a new notification type in the database
         /// </summary>
@@ -23,7 +16,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent"></param>
         /// <param name="jsonSchema">json Schema for the notification message that will be sent to subscribers</param>
         /// <returns>A token that the publisher must use in subsequent calls to NotifySubscribers</returns>
-        internal string CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
+        public string CreateNotificationEvent(string publisher, string notificationEvent, string jsonSchema)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -77,7 +70,7 @@ namespace XanoSNCLibrary
         /// Gets a list of all notification types from the database
         /// </summary>
         /// <returns></returns>
-        internal List<string> GetNotificationEvents()
+        public List<string> GetNotificationEvents()
         {
             using (var db = new XanoSNCEntities())
             {
@@ -91,7 +84,7 @@ namespace XanoSNCLibrary
         /// Gets a list of all active subscribers
         /// </summary>
         /// <returns></returns>
-        internal List<Subscriber> GetSubscribers()
+        public List<Subscriber> GetSubscribers()
         {
             using (var db = new XanoSNCEntities())
             {
@@ -103,7 +96,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        internal string GetNotificationEventMessageSchema(string notificationEvent)
+        public string GetNotificationEventMessageSchema(string notificationEvent)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -120,7 +113,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="subscriber"></param>
         /// <returns></returns>
-        internal List<NotificationEvent> GetNotificationsForSubscriber(Subscriber subscriber)
+        public List<NotificationEvent> GetNotificationsForSubscriber(Subscriber subscriber)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -135,7 +128,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        internal string GetUrlFromSubscription(string notificationEvent, string subscriber)
+        public string GetUrlFromSubscription(string notificationEvent, string subscriber)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -173,7 +166,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        internal bool NotificationEventHasToken(string notificationEvent, string token)
+        public bool NotificationEventHasToken(string notificationEvent, string token)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -189,7 +182,7 @@ namespace XanoSNCLibrary
         /// </summary>
         /// <param name="notification"></param>
         /// <returns></returns>
-        internal List<string> GetSubscribersForNotification(string notification)
+        public List<string> GetSubscribersForNotification(string notification)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -202,7 +195,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        internal bool SubscriptionNotificationHasToken(string subscriber, string notificationEvent, string token)
+        public bool SubscriptionNotificationHasToken(string subscriber, string notificationEvent, string token)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -223,7 +216,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationEvent"></param>
         /// <param name="notifyUrl"></param>
         /// <returns>A token that must be used when unsubscribing</returns>
-        internal string Subscribe(string subscriber, string notificationEvent, string emailAddress, string notifyUrl)
+        public string Subscribe(string subscriber, string notificationEvent, string emailAddress, string notifyUrl)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -289,7 +282,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        internal string GetEMailFromSubscription(string notificationEvent, string subscriber)
+        public string GetEMailFromSubscription(string notificationEvent, string subscriber)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -302,7 +295,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        internal void UpdateSubscriptionNotificationWithError(int subscriptionNotificationId, string errorMessage)
+        public void UpdateSubscriptionNotificationWithError(int subscriptionNotificationId, string errorMessage)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -314,7 +307,7 @@ namespace XanoSNCLibrary
             }
         }
 
-        internal int CreateSubscriptionNotification(int notificationId, string subscriber)
+        public int CreateSubscriptionNotification(int notificationId, string subscriber)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -347,7 +340,7 @@ namespace XanoSNCLibrary
         /// <param name="subscriber"></param>
         /// <param name="notificationEvent"></param>
         /// <param name="token">A token issued by the subscribe method</param>
-        internal void Unsubscribe(string subscriber, string notificationEvent, string token)
+        public void Unsubscribe(string subscriber, string notificationEvent, string token)
         {
             using (var db = new XanoSNCEntities())
             {
@@ -400,7 +393,7 @@ namespace XanoSNCLibrary
         /// Tracks an outgoing SNC notification attempt to subscribers in the database
         /// </summary>
         /// <param name="notificationEvent"></param>
-        internal int CreateNotification(string publisher, string notificationEvent, string message)
+        public int CreateNotification(string publisher, string notificationEvent, string message)
         {
             // Insert a notification record
             using (var db = new XanoSNCEntities())
@@ -440,7 +433,7 @@ namespace XanoSNCLibrary
         /// <param name="notificationId">Id of the notification record</param>
         /// <param name="subscriber">Subscriber we attempted to contact</param>
         /// <param name="errorMessage">If an error occurred, this will be a non-null string with the message</param>
-        internal void CreateSubscriptionNotification(int notificationId, string subscriber, string errorMessage)
+        public void CreateSubscriptionNotification(int notificationId, string subscriber, string errorMessage)
         {
             // Find the subscription id by subscriber name and notification event name
             // We need it to create a list of records for each subscriber that we attemped to contact

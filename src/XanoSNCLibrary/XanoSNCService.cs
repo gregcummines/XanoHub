@@ -25,14 +25,13 @@ namespace XanoSNCLibrary
     /// </summary>
     public class XanoSNCService : IXanoSNCService
     {
-        // Greg 10/25/2015: I wanted to dependency inject the repository interface into the 
-        // WCF service constructor using an IOC framework, such as Unity, ServiceMap, 
-        // Castlerock, or Ninject. But I can't figure out how to do the registration before this 
-        // object is instantiated. So I built a singleton for the repository until this can be 
-        // figured out. The downside is that I cannot unit test this component without using 
-        // the repository singleton!!! 
-        //private IXanoSNCRepository SNCRepository;
+        private IXanoSNCRepository _xanoSNCRepository;
 
+        public XanoSNCService(IXanoSNCRepository xanoSNCRepository)
+        {
+            _xanoSNCRepository = xanoSNCRepository;
+        }
+        
         /// <summary>
         /// Used to create a notification. Any service can create a notification and notify
         /// any subscribers of changes. 
@@ -63,7 +62,7 @@ namespace XanoSNCLibrary
 
             try
             {
-                token = XanoSNCRepository.Instance.CreateNotificationEvent(publisher, notificationEvent, jsonSchemaString);
+                token = _xanoSNCRepository.CreateNotificationEvent(publisher, notificationEvent, jsonSchemaString);
             }
             catch(Exception e)
             {
@@ -80,7 +79,7 @@ namespace XanoSNCLibrary
         {
             try
             {
-                return XanoSNCRepository.Instance.GetNotificationEvents();
+                return _xanoSNCRepository.GetNotificationEvents();
             }
             catch(Exception e)
             {
@@ -94,7 +93,7 @@ namespace XanoSNCLibrary
             var jsonSchemaString = string.Empty;
             try
             {
-                jsonSchemaString = XanoSNCRepository.Instance.GetNotificationEventMessageSchema(notificationEvent);
+                jsonSchemaString = _xanoSNCRepository.GetNotificationEventMessageSchema(notificationEvent);
             }
             catch (Exception e)
             {
@@ -116,7 +115,7 @@ namespace XanoSNCLibrary
 
             try
             {
-                return XanoSNCRepository.Instance.Subscribe(subscriber, notification, emailAddress, notifyUrlString);
+                return _xanoSNCRepository.Subscribe(subscriber, notification, emailAddress, notifyUrlString);
             }
             catch (Exception e)
             {
@@ -129,7 +128,7 @@ namespace XanoSNCLibrary
         {
             try
             {
-                XanoSNCRepository.Instance.Unsubscribe(subscriber, notificationEvent, token);
+                _xanoSNCRepository.Unsubscribe(subscriber, notificationEvent, token);
             }
             catch (Exception e)
             {
@@ -165,11 +164,11 @@ namespace XanoSNCLibrary
             try
             {
                 // Verify that this is the publisher that created the event
-                if (XanoSNCRepository.Instance.NotificationEventHasToken(notificationEvent, token))
+                if (_xanoSNCRepository.NotificationEventHasToken(notificationEvent, token))
                 {
                     // Let the repository know that we are starting a notify, so that a Notification record
                     // can be created to track everything
-                    notificationId = XanoSNCRepository.Instance.CreateNotification(publisher, notificationEvent, jsonString);
+                    notificationId = _xanoSNCRepository.CreateNotification(publisher, notificationEvent, jsonString);
                 }
             }
             catch (Exception e)
@@ -186,7 +185,7 @@ namespace XanoSNCLibrary
             List<string> subscribers = null;
             try
             {
-                subscribers = XanoSNCRepository.Instance.GetSubscribersForNotification(notificationEvent);
+                subscribers = _xanoSNCRepository.GetSubscribersForNotification(notificationEvent);
             }
             catch (Exception e)
             {
@@ -209,11 +208,11 @@ namespace XanoSNCLibrary
         {
             try
             {
-                var notifyUrl = XanoSNCRepository.Instance.GetUrlFromSubscription(notificationEvent, subscriber);
+                var notifyUrl = _xanoSNCRepository.GetUrlFromSubscription(notificationEvent, subscriber);
 
                 // Start a subscription notification record. We'll update it when we after we attempt to 
                 // reach the subscriber
-                var subscriptionNotificationId = XanoSNCRepository.Instance.CreateSubscriptionNotification(notificationId, subscriber); 
+                var subscriptionNotificationId = _xanoSNCRepository.CreateSubscriptionNotification(notificationId, subscriber); 
 
                 using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
                 {
@@ -226,7 +225,7 @@ namespace XanoSNCLibrary
                     {
                         var jsonResult = response.Content.ReadAsStringAsync().Result;
                         NotifySubscriberOfError(subscriber, notificationEvent, publisher, notifyUrl, json, jsonResult);
-                        XanoSNCRepository.Instance.UpdateSubscriptionNotificationWithError(subscriptionNotificationId, jsonResult);
+                        _xanoSNCRepository.UpdateSubscriptionNotificationWithError(subscriptionNotificationId, jsonResult);
                     }
                 }
             }
@@ -253,7 +252,7 @@ namespace XanoSNCLibrary
             string json, 
             string serverResponse)
         {
-            string emailAddress = XanoSNCRepository.Instance.GetEMailFromSubscription(notificationEvent, subscriber);
+            string emailAddress = _xanoSNCRepository.GetEMailFromSubscription(notificationEvent, subscriber);
             if (IsValidEmail(emailAddress))
             {
                 var errorMessage = "<h2>Could not reach " + subscriber + ".</h2><p> " + publisher + " published a " + notificationEvent + " notification, but the XanoServiceNotificationCenter could not relay that to: " + notifyUrl +
@@ -290,7 +289,7 @@ namespace XanoSNCLibrary
         public void TestNotifySubscriber(string subscriber, string notificationEvent, string subscriptionToken, string json)
         {
             // todo: Make sure this is the subscriber by validating the subscription token
-            if (XanoSNCRepository.Instance.SubscriptionNotificationHasToken(subscriber, notificationEvent, subscriptionToken))
+            if (_xanoSNCRepository.SubscriptionNotificationHasToken(subscriber, notificationEvent, subscriptionToken))
             {
                 NotifySubscriber(/* no notificationId since we are not storing this test */0, 
                     "TestPublisher", "testNotificationEvent", subscriber, json);

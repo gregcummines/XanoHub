@@ -14,7 +14,7 @@ namespace XanoSNCWindowsService
 {
     public partial class XanoSNCWindowsService : ServiceBase
     {
-        private ServiceHost wcfXanoSNCService; 
+        private CustomServiceHost wcfXanoSNCService; 
 
         public XanoSNCWindowsService()
         {
@@ -28,7 +28,7 @@ namespace XanoSNCWindowsService
 
         protected override void OnStart(string[] args)
         {
-            wcfXanoSNCService = new ServiceHost(typeof(XanoSNCService));
+            wcfXanoSNCService = new CustomServiceHost(typeof(XanoSNCService));
             wcfXanoSNCService.Open();
         }
 
