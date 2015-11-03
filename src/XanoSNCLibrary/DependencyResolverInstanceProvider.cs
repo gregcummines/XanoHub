@@ -24,7 +24,8 @@ namespace XanoSNCLibrary
         public object GetInstance(InstanceContext instanceContext, Message message)
         {
             IXanoSNCRepository repository = new XanoSNCRepository();
-            return new XanoSNCService(repository);
+            IMailService mailService = new MailService();
+            return new XanoSNCService(repository, mailService);
         }
 
         public void ReleaseInstance(InstanceContext instanceContext, object instance)

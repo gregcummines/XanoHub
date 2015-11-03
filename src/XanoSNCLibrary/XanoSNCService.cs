@@ -26,10 +26,12 @@ namespace XanoSNCLibrary
     public class XanoSNCService : IXanoSNCService
     {
         private IXanoSNCRepository _xanoSNCRepository;
+        private IMailService _mailService;
 
-        public XanoSNCService(IXanoSNCRepository xanoSNCRepository)
+        public XanoSNCService(IXanoSNCRepository xanoSNCRepository, IMailService mailService)
         {
             _xanoSNCRepository = xanoSNCRepository;
+            _mailService = mailService;
         }
         
         /// <summary>
@@ -257,7 +259,7 @@ namespace XanoSNCLibrary
             {
                 var errorMessage = "<h2>Could not reach " + subscriber + ".</h2><p> " + publisher + " published a " + notificationEvent + " notification, but the XanoServiceNotificationCenter could not relay that to: " + notifyUrl +
                     ". </p><p>Here is extra information that was sent with the message: " + json + "</p>.<p>Detailed error information: " + serverResponse + "</p>";
-                await MailService.Instance.SendEmailAsync(emailAddress, "Error contacting " + subscriber, errorMessage);
+                await _mailService.SendEmailAsync(emailAddress, "Error contacting " + subscriber, errorMessage);
             }
         }
 

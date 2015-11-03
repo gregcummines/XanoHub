@@ -8,16 +8,9 @@ using System.Threading.Tasks;
 
 namespace XanoSNCLibrary
 {
-    internal class MailService
+    public class MailService : IMailService
     {
-        #region Singleton
-        private static MailService instance = new MailService();
-        private MailService() { }
-
-        internal static MailService Instance { get { return instance; } }
-        #endregion
-
-        internal Task SendEmailAsync(string toAddress, string subject, string message, MailPriority priority = MailPriority.Normal)
+        public Task SendEmailAsync(string toAddress, string subject, string message, MailPriority priority = MailPriority.Normal)
         {
             var mail = new MailMessage(ConfigurationManager.AppSettings["EmailFromAddress"], toAddress);
             var client = new SmtpClient();

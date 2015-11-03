@@ -74,6 +74,7 @@
     <Compile Include="DependencyResolverInstanceProvider.cs" />
     <Compile Include="DependencyResolverServiceBehavior.cs" />
     <Compile Include="ErrorData.cs" />
+    <Compile Include="IMailService.cs" />
     <Compile Include="IXanoSNCRepository.cs" />
     <Compile Include="IXanoSNCService.cs" />
     <Compile Include="MailService.cs" />
