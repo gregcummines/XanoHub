@@ -193,16 +193,19 @@ namespace XanoSNCLibrary
                 ThrowWebFaultOnRepositoryException(e);
             }
 
+            // Attempt to notify each subscriber
             foreach (var subscriber in subscribers)
             {
-                var errorMessage = string.Empty;    
-
-                // Try to notify each subscriber
                 NotifySubscriber(notificationId, publisher, notificationEvent, subscriber, jsonString);
             }
         }
 
-        async private void NotifySubscriber(int notificationId, string publisher, string notificationEvent, string subscriber, string json)
+        async private void NotifySubscriber(
+            int notificationId, 
+            string publisher, 
+            string notificationEvent, 
+            string subscriber, 
+            string json)
         {
             try
             {
@@ -222,13 +225,7 @@ namespace XanoSNCLibrary
                     if (!response.IsSuccessStatusCode)
                     {
                         var jsonResult = response.Content.ReadAsStringAsync().Result;
-                        string emailAddress = XanoSNCRepository.Instance.GetEMailFromSubscription(notificationEvent, subscriber);
-                        if (IsValidEmail(emailAddress))
-                        {
-                            var errorMessage = "<h2>Could not reach " + subscriber + ".</h2><p> " + publisher + " published a " + notificationEvent + " notification, but the XanoServiceNotificationCenter could not relay that to: " + notifyUrl +
-                                ". </p><p>Here is extra information that was sent with the message: " + json + "</p>.<p>Detailed error information: " + jsonResult + "</p>";
-                            await MailService.Instance.SendEmailAsync(emailAddress, "Error contacting " + subscriber, errorMessage);
-                        }
+                        NotifySubscriberOfError(subscriber, notificationEvent, publisher, notifyUrl, json, jsonResult);
                         XanoSNCRepository.Instance.UpdateSubscriptionNotificationWithError(subscriptionNotificationId, jsonResult);
                     }
                 }
@@ -236,6 +233,32 @@ namespace XanoSNCLibrary
             catch(Exception e)
             {
                 ThrowWebFault(e.Message, HttpStatusCode.InternalServerError);
+            }
+        }
+
+        /// <summary>
+        /// Notifies the subscriber via e-mail that the service could not be reached for notification
+        /// </summary>
+        /// <param name="subscriber"></param>
+        /// <param name="notificationEvent"></param>
+        /// <param name="publisher"></param>
+        /// <param name="notifyUrl"></param>
+        /// <param name="json"></param>
+        /// <param name="serverResponse"></param>
+        private async void NotifySubscriberOfError(
+            string subscriber, 
+            string notificationEvent, 
+            string publisher, 
+            string notifyUrl, 
+            string json, 
+            string serverResponse)
+        {
+            string emailAddress = XanoSNCRepository.Instance.GetEMailFromSubscription(notificationEvent, subscriber);
+            if (IsValidEmail(emailAddress))
+            {
+                var errorMessage = "<h2>Could not reach " + subscriber + ".</h2><p> " + publisher + " published a " + notificationEvent + " notification, but the XanoServiceNotificationCenter could not relay that to: " + notifyUrl +
+                    ". </p><p>Here is extra information that was sent with the message: " + json + "</p>.<p>Detailed error information: " + serverResponse + "</p>";
+                await MailService.Instance.SendEmailAsync(emailAddress, "Error contacting " + subscriber, errorMessage);
             }
         }
 
@@ -264,38 +287,13 @@ namespace XanoSNCLibrary
             throw new WebFaultException<ErrorData>(errorData, HttpStatusCode.InternalServerError);
         }
 
-        public string TestGetMe(string test)
-        {
-            OperationContext context = OperationContext.Current;
-
-            if (context != null)
-            {
-                MessageProperties messageProperties = context.IncomingMessageProperties;
-            }
-
-            return "GET Result is " + test;
-        }
-
-        public string TestPostMe(string test)
-        {
-            return "POST Result is " + test;
-        }
-
-        public void TestPostStream(string myString, Stream stream)
-        {
-            string jsonString = string.Empty;
-            using (var reader = new StreamReader(stream, Encoding.UTF8, false, 100, true))
-            {
-                jsonString = reader.ReadToEnd();
-            }
-        }
-
         public void TestNotifySubscriber(string subscriber, string notificationEvent, string subscriptionToken, string json)
         {
             // todo: Make sure this is the subscriber by validating the subscription token
             if (XanoSNCRepository.Instance.SubscriptionNotificationHasToken(subscriber, notificationEvent, subscriptionToken))
             {
-                NotifySubscriber(0, "TestPublisher", "testNotificationEvent", subscriber, json);
+                NotifySubscriber(/* no notificationId since we are not storing this test */0, 
+                    "TestPublisher", "testNotificationEvent", subscriber, json);
             }
             else
             {

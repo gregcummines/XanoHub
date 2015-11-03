@@ -13,39 +13,6 @@ namespace XanoSNCLibrary
     public interface IXanoSNCService
     {
         /// <summary>
-        /// Test GET Method
-        /// </summary>
-        /// <param name="test"></param>
-        /// <returns></returns>
-        [OperationContract]
-        [WebInvoke(
-            Method = "GET",
-            UriTemplate = "testGetMe/{test}",
-            RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
-        string TestGetMe(string test);
-
-        /// <summary>
-        /// Test POST Method
-        /// </summary>
-        /// <param name="test"></param>
-        /// <returns></returns>
-        [OperationContract]
-        [WebInvoke(
-            Method = "POST",
-            UriTemplate = "testPostMe",
-            RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
-        string TestPostMe(string test);
-
-        [OperationContract]
-        [WebInvoke(
-        Method = "POST",
-        UriTemplate = "testPostStream/{myString}",
-        ResponseFormat = WebMessageFormat.Json)]
-        void TestPostStream(string myString, Stream stream);
-
-        /// <summary>
         /// Allows a publisher to create a notification event type that subscribers can subscribe to
         /// </summary>
         /// <param name="request"></param>

@@ -20,56 +20,10 @@ namespace XanoServiceNotificationCenterTestPublisher
     {
         static void Main()
         {
-            //TestGetMe();
-            //TestPostMe();
-            //TestPostSteam();
             //Publisher_CreateNotificationEvent();
             //GetNotificationEvents();
             Publisher_SendNotification();
             Publisher_SendBadNotification();
-        }
-
-        private static void TestGetMe()
-        {
-            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
-            {
-                var url = "http://localhost:8733/XanoServiceNotificationCenter/testGetMe/myString";
-                var httpResponseMessage = httpClient.GetAsync(url);
-                var result = httpResponseMessage.Result;
-                var jsonResult = result.Content.ReadAsStringAsync().Result;
-                dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
-            }
-        }
-
-        private static void TestPostMe()
-        {
-            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
-            {
-                var url = "http://localhost:8733/XanoServiceNotificationCenter/testPostMe";
-                string json = "\"This is a test\"";
-                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var httpResponseMessage = httpClient.PostAsync(url, stringContent);
-                var result = httpResponseMessage.Result;
-                var jsonResult = result.Content.ReadAsStringAsync().Result;
-                dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
-           }
-        }
-
-        private static void TestPostSteam()
-        {
-            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
-            {
-                var url = "http://localhost:8733/XanoServiceNotificationCenter/testPostStream/thisismystring";
-                var jsonSchema = "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"id\":\"http://jsonschema.net\",\"type\":\"object\",\"properties\":{\"FirmwarePackageVersion\":{\"id\":\"http://jsonschema.net/FirmwarePackageVersion\",\"type\":\"string\"},\"FirmwareConfigurationVersion\":{\"id\":\"http://jsonschema.net/FirmwareConfigurationVersion\",\"type\":\"string\"}},\"required\":[\"FirmwarePackageVersion\",\"FirmwareConfigurationVersion\"]}";
-
-                var stringContent = new StringContent(jsonSchema, Encoding.UTF8);
-
-                var httpResponseMessage = httpClient.PostAsync(url, stringContent);
-                var result = httpResponseMessage.Result;
-                var jsonResult = result.Content.ReadAsStringAsync().Result;
-                dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
-            }
         }
 
         static void Publisher_CreateNotificationEvent()
