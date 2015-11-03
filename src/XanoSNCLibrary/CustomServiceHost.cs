@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace XanoSNCLibrary
 {
+    /// <summary>
+    /// Class used to override the construction process of the WCF service such
+    /// that I can provide a dependency injection hook
+    /// See article: http://blogs.msdn.com/b/carlosfigueira/archive/2011/05/31/wcf-extensibility-iinstanceprovider.aspx
+    /// </summary>
     public class CustomServiceHost : ServiceHost
     {
         public CustomServiceHost()
