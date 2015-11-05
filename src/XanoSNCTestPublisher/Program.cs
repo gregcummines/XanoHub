@@ -21,7 +21,7 @@ namespace XanoServiceNotificationCenterTestPublisher
         static void Main()
         {
             //Publisher_CreateNotificationEvent();
-            //GetNotificationEvents();
+            GetNotificationEvents();
             Publisher_SendNotification();
             Publisher_SendBadNotification();
         }
