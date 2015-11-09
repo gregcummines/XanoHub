@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Headers; // For AuthenticationHeaderValue
 using System.Web;
+using XanoSNCTestPublisher;
 
 namespace XanoServiceNotificationCenterTestPublisher
 {
@@ -52,13 +53,22 @@ namespace XanoServiceNotificationCenterTestPublisher
 
         static void GetNotificationEvents()
         {
-            using (var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
+            using (var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler() { UseDefaultCredentials = true })))
             {
                 var url = "http://localhost:8733/XanoServiceNotificationCenter/getNotificationEvents";
                 var httpResponseMessage = httpClient.GetAsync(url);
                 var result = httpResponseMessage.Result;
-                var jsonResult = result.Content.ReadAsStringAsync().Result;
-                dynamic jsonResponse = JsonConvert.DeserializeObject(jsonResult);
+                if (result.IsSuccessStatusCode)
+                {
+                    var jsonResult = result.Content.ReadAsStringAsync().Result;
+                    var notificationEvents = JsonConvert.DeserializeObject<List<string>>(jsonResult);
+                }
+                else
+                {
+                    // handle the bad status code
+                    var jsonResult = result.Content.ReadAsStringAsync().Result;
+                    Log("Error. The status code was " + result.StatusCode + ". " + jsonResult);
+                }
             }
         }
 

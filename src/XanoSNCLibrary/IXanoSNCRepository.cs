@@ -82,5 +82,12 @@ namespace XanoSNCLibrary
         /// <param name="subscriber">Subscriber we attempted to contact</param>
         /// <param name="errorMessage">If an error occurred, this will be a non-null string with the message</param>
         void CreateSubscriptionNotification(int notificationId, string subscriber, string errorMessage);
+
+        /// <summary>
+        /// Updates the schema for this notification event 
+        /// </summary>
+        /// <param name="token">Token of the notification event that was returned in CreateNotificationEvent</param>
+        /// <param name="jsonSchemaString">new json schema</param>
+        void UpdateNotificationEventJsonSchema(string token, string jsonSchemaString);
     }
 }

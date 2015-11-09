@@ -73,6 +73,35 @@ namespace XanoSNCLibrary
             return token;
         }
 
+        public void UpdateNotificationEventJsonSchema(string token, Stream jsonSchema)
+        {
+            if (jsonSchema == null)
+                ThrowWebFault("jsonSchema is null", HttpStatusCode.BadRequest);
+
+            string jsonSchemaString = string.Empty;
+
+            try
+            {
+                using (var reader = new StreamReader(jsonSchema, Encoding.UTF8, false, 100, true))
+                {
+                    jsonSchemaString = reader.ReadToEnd();
+                }
+            }
+            catch (Exception e)
+            {
+                ThrowWebFault(e.Message, HttpStatusCode.InternalServerError);
+            }
+
+            try
+            {
+                _xanoSNCRepository.UpdateNotificationEventJsonSchema(token, jsonSchemaString);
+            }
+            catch (Exception e)
+            {
+                ThrowWebFaultOnRepositoryException(e);
+            }
+        }
+
         /// <summary>
         /// Gets the list of notifications supported by the XanoSNC
         /// </summary>

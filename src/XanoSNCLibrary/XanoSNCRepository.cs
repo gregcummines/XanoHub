@@ -67,6 +67,32 @@ namespace XanoSNCLibrary
         }
 
         /// <summary>
+        /// Updates the Json schema associated with an existing notification event defined by the token
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="jsonSchemaString"></param>
+        public void UpdateNotificationEventJsonSchema(
+            string token,
+            string jsonSchemaString)
+        {
+            using (var db = new XanoSNCEntities())
+            {
+                var notificationEvent = (from ne in db.xNotificationEvents
+                                        where ne.Token == token
+                                        select ne).SingleOrDefault();
+                if (notificationEvent != null)
+                {
+                    throw new Exception("No notification event found with token: " + token);
+                }
+                else
+                {
+                    notificationEvent.JsonSchema = jsonSchemaString;
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets a list of all notification types from the database
         /// </summary>
         /// <returns></returns>

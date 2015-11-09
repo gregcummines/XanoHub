@@ -20,8 +20,17 @@ namespace XanoSNCLibrary
         [WebInvoke(
             Method = "POST",
             UriTemplate = "createNotificationEvent/{publisher}/{notificationEvent}",
+            RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         string CreateNotificationEvent(string publisher, string notificationEvent, Stream jsonSchema);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "updateNotificationEventJsonSchema/{token}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        void UpdateNotificationEventJsonSchema(string token, Stream jsonSchema);
 
         /// <summary>
         /// Returns a list of persisted notification events
