@@ -100,6 +100,15 @@ namespace XanoSNCLibrary
             {
                 ThrowWebFaultOnRepositoryException(e);
             }
+
+            // e-mail the subscribers of this notificationEvent that the schema has been updated. 
+            //string emailAddress = _xanoSNCRepository.GetEMailFromSubscription();
+            //if (IsValidEmail(emailAddress))
+            //{
+            //    var errorMessage = "<h2>Could not reach " + subscriber + ".</h2><p> " + publisher + " published a " + notificationEvent + " notification, but the XanoServiceNotificationCenter could not relay that to: " + notifyUrl +
+            //        ". </p><p>Here is extra information that was sent with the message: " + json + "</p>.<p>Detailed error information: " + serverResponse + "</p>";
+            //    await _mailService.SendEmailAsync(emailAddress, "Error contacting " + subscriber, errorMessage);
+            //}
         }
 
         /// <summary>
