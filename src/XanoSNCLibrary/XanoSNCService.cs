@@ -33,12 +33,15 @@ namespace XanoSNCLibrary
             _xanoSNCRepository = xanoSNCRepository;
             _mailService = mailService;
         }
-        
+
         /// <summary>
         /// Used to create a notification. Any service can create a notification and notify
         /// any subscribers of changes. 
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="publisher">Name of the publisher</param>
+        /// <param name="notificationEvent">Name of the notification event</param>
+        /// <param name="jsonSchema">json schema for messages that will be sent via NotifySubscribers</param>
+        /// <returns></returns>
         public string CreateNotificationEvent(string publisher, string notificationEvent, Stream jsonSchema)
         {
             if (publisher == null)
@@ -101,7 +104,7 @@ namespace XanoSNCLibrary
                 ThrowWebFaultOnRepositoryException(e);
             }
 
-            // e-mail the subscribers of this notificationEvent that the schema has been updated. 
+            // todo: e-mail the subscribers of this notificationEvent that the schema has been updated. 
             //string emailAddress = _xanoSNCRepository.GetEMailFromSubscription();
             //if (IsValidEmail(emailAddress))
             //{
@@ -112,7 +115,7 @@ namespace XanoSNCLibrary
         }
 
         /// <summary>
-        /// Gets the list of notifications supported by the XanoSNC
+        /// Gets the entire list of notification events that have been created by publishers 
         /// </summary>
         /// <returns></returns>
         public List<string> GetNotificationEvents()
@@ -128,6 +131,11 @@ namespace XanoSNCLibrary
             return null;
         }
 
+        /// <summary>
+        /// Gets a json schema for the notification event
+        /// </summary>
+        /// <param name="notificationEvent"></param>
+        /// <returns></returns>
         public Stream GetNotificationEventMessageSchema(string notificationEvent)
         {
             var jsonSchemaString = string.Empty;
@@ -145,7 +153,16 @@ namespace XanoSNCLibrary
             return new MemoryStream(Encoding.UTF8.GetBytes(jsonSchemaString));
         }
 
-        public string Subscribe(string subscriber, string notification, string emailAddress, Stream notifyUrl)
+        /// <summary>
+        /// Allows a subscriber to subscribe to a notification event
+        /// </summary>
+        /// <param name="subscriber">Name of subscriber</param>
+        /// <param name="notificationEvent">Name of notification event</param>
+        /// <param name="emailAddress">e-mail address of an administrator for this subscriber in 
+        /// case the service cannot be contacted an e-mail will be sent instead.</param>
+        /// <param name="notifyUrl">The Url to send the notification event to</param>
+        /// <returns></returns>
+        public string Subscribe(string subscriber, string notificationEvent, string emailAddress, Stream notifyUrl)
         {
             string notifyUrlString = string.Empty;
             using (var reader = new StreamReader(notifyUrl, Encoding.UTF8, false, 100, true))
@@ -155,7 +172,7 @@ namespace XanoSNCLibrary
 
             try
             {
-                return _xanoSNCRepository.Subscribe(subscriber, notification, emailAddress, notifyUrlString);
+                return _xanoSNCRepository.Subscribe(subscriber, notificationEvent, emailAddress, notifyUrlString);
             }
             catch (Exception e)
             {
@@ -164,6 +181,12 @@ namespace XanoSNCLibrary
             return null;
         }
 
+        /// <summary>
+        /// Allows the subscriber to unsubscribe from a notification event
+        /// </summary>
+        /// <param name="subscriber">Name of subscriber</param>
+        /// <param name="notificationEvent">Name of notification event</param>
+        /// <param name="token">Token that was returned from Subscribe</param>
         public void Unsubscribe(string subscriber, string notificationEvent, string token)
         {
             try

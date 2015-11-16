@@ -28,6 +28,9 @@ namespace XanoSNCWindowsService
 
         protected override void OnStart(string[] args)
         {
+            // A CustomServiceHost class was created to hook into the creation process of the
+            // WCF service so that dependencies on other class objects could be injected for 
+            // unit test support. 
             wcfXanoSNCService = new CustomServiceHost(typeof(XanoSNCService));
             wcfXanoSNCService.Open();
         }
